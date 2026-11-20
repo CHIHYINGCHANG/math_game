@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#152d4c"><meta name="description" content="Math Quest 國七數學 RPG：隨機出題、闖關與錯題複習。">
+<title>Math Quest｜國七數學勇者</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;color:#23334a;background:#f0f5fc;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0;min-height:100vh}button,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}
+.wrap{max-width:1100px;margin:auto;padding:22px 16px 60px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}
+.brand small{color:#426888;font-weight:800;letter-spacing:.16em}.brand h1{font-size:clamp(24px,5vw,36px);margin:3px 0}
+.tag{padding:8px 14px;background:#e5f2ff;border-radius:50px;color:#235b9c;font-weight:800;font-size:13px}
+.layout{display:grid;grid-template-columns:1fr 330px;gap:18px}
+.panel{background:#fff;border:1px solid #d9e6f3;border-radius:22px;box-shadow:0 8px 25px #183b6510;padding:20px;margin-bottom:16px}
+.battle{background:linear-gradient(155deg,#263f69,#14243c);color:white;overflow:hidden}
+.scene{min-height:165px;display:flex;align-items:center;justify-content:center;gap:35px;background:radial-gradient(ellipse at 50% 90%,#517c9b 0,#304e73 45%,transparent 80%);border-radius:18px;margin:12px 0 20px}
+.character{text-align:center;font-size:80px;filter:drop-shadow(0 10px 5px #06162785);transform-origin:center}
+.character:nth-child(2){animation:bob 2.8s ease-in-out infinite}.character span{display:block;font-size:13px;font-weight:800}
+@keyframes bob{50%{transform:translateY(-9px)}}.bars{display:grid;gap:12px}
+.barlabel{display:flex;justify-content:space-between;font-size:14px;font-weight:750;margin-bottom:5px}
+.track{background:#ffffff28;border-radius:30px;height:12px;overflow:hidden}.fill{height:100%;transition:width .3s;border-radius:30px}.red{background:#fb747c}.green{background:#4ed8a3}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:17px}.stat{background:#ffffff15;padding:10px;border-radius:11px;text-align:center}.stat strong{display:block;font-size:21px}.stat small{color:#c5dcf4}
+h2{font-size:19px;margin:0 0 13px}h3{margin:0 0 8px}.muted{color:#6a7b91}.eyebrow{color:#6e829b;font-size:13px;font-weight:700}
+.difficulties{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}
+.pill{background:#eef4fb;border:1px solid #d9e5f1;border-radius:999px;padding:9px 15px;font-weight:750;color:#435a78}
+.pill.active{background:#2463b2;color:white;border-color:#2463b2}.pill:disabled{opacity:.5}
+.question{font-size:clamp(22px,4vw,30px);font-weight:850;line-height:1.4;margin:14px 0 18px;overflow-wrap:anywhere}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}.option{min-height:76px;border:2px solid #e1eaf4;border-radius:14px;background:#f9fbff;font-weight:800;font-size:20px;color:#24364e}
+.option:hover:not(:disabled){border-color:#8ab1e4;background:#eef6ff}.option.correct{background:#dff8e9;border-color:#32b67d}.option.incorrect{background:#ffe9e9;border-color:#f26b73}
+.option small{display:block;color:#71869e;font-size:11px}
+.btn{padding:12px 17px;border:0;border-radius:13px;background:#2463b2;color:white;font-weight:800}.btn.secondary{background:#e8f0f9;color:#34516d}.btn.good{background:#168b68}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}.feedback{padding:14px;border-radius:13px;background:#edf5ff;margin-top:14px;line-height:1.65}.feedback.ok{background:#e6f9ee}.feedback.bad{background:#fff1ed}
+.chapters{display:grid;gap:10px}.chapter{text-align:left;background:#f5f8fe;border:2px solid #e1eaf5;border-radius:14px;padding:13px;color:#30455f}.chapter.selected{border-color:#3a80d5;background:#e9f3ff}
+.chapter strong{display:block;margin-bottom:3px}.chapter small{color:#68809c}.chapter:disabled{opacity:.55}
+.footertext{font-size:12px;color:#738399;line-height:1.65}.count{font-weight:800;color:#236bb8}
+.separator{height:1px;background:#e5edf6;margin:17px 0}.hidden{display:none!important}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.wrap{padding:16px 12px 40px}.panel{padding:16px}.scene{min-height:130px}.character{font-size:60px}.choices{gap:8px}.option{min-height:67px}}
+@media(prefers-reduced-motion:reduce){.character:nth-child(2){animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div class="brand"><small>MATH QUEST · GRADE 7 · FULL YEAR</small><h1>⚔️ 數學勇者傳說</h1><div class="muted">國七全年 RPG｜段考進階隨機題庫</div></div><div class="tag" id="levelBadge">LV 1</div></header>
+<div class="layout">
+<main>
+<section class="panel battle" aria-label="戰鬥狀態">
+<div class="eyebrow" style="color:#bbd2f0" id="battleTitle">第一區域 · 數與數線</div>
+<div class="scene"><div class="character" aria-label="勇者">🧙‍♂️<span>數學勇者</span></div><div class="character" aria-label="怪物" id="enemyArt">👾<span>森林史萊姆</span></div></div>
+<div class="bars"><div><div class="barlabel"><span id="enemyName">森林史萊姆</span><span id="enemyText">150 / 150 HP</span></div><div class="track"><div class="fill red" id="enemyBar" style="width:100%"></div></div></div><div><div class="barlabel"><span>勇者生命</span><span id="heroText">100 / 100 HP</span></div><div class="track"><div class="fill green" id="heroBar" style="width:100%"></div></div></div></div>
+<div class="stats"><div class="stat">⚡ <strong id="xpNum">0</strong><small>經驗值</small></div><div class="stat">🔥 <strong id="comboNum">0</strong><small>連擊</small></div><div class="stat">🏆 <strong id="winsNum">0</strong><small>擊敗怪物</small></div></div>
+</section>
+<section class="panel" id="playPanel">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><h2 id="questionTitle">數學攻擊</h2><span class="eyebrow" id="roundText">第 1 回合</span></div>
+<div class="difficulties" id="difficulties"><button class="pill active" data-diff="0">基礎 · 20 傷害</button><button class="pill" data-diff="1">進階 · 30 傷害</button><button class="pill" data-diff="2">挑戰 · 45 傷害</button></div>
+<div class="eyebrow" id="topicText">整數加減</div><div class="question" id="questionText"></div>
+<div class="choices" id="options"></div>
+<div class="actions"><button class="btn secondary" id="hintBtn">💡 查看提示</button><button class="btn secondary" id="reviewBtn">📖 錯題復仇（0）</button></div>
+<div id="hintBox" class="feedback hidden"></div><div id="feedbackBox" class="feedback hidden" aria-live="polite"></div>
+<div class="actions"><button class="btn hidden" id="nextBtn">下一題 ➜</button><button class="btn good hidden" id="continueBtn">繼續冒險 ➜</button></div>
+</section>
+</main>
+<aside>
+<section class="panel"><h2>🗺️ 冒險地圖</h2><div class="chapters" id="chapters"></div><div class="separator"></div><div class="footertext">每一區依知識點出題；題目涵蓋七上、七下九個單元，數值與選項會隨機變化，並避免連續出現相同題目。</div></section>
+<section class="panel"><h2>📈 學習成果</h2><p>已回答：<span class="count" id="attemptsNum">0</span> 題</p><p>正確率：<span class="count" id="accuracyNum">0%</span></p><p>錯題本：<span class="count" id="mistakeNum">0</span> 題</p><p>本機保存：<span class="count">已啟用</span></p><div class="separator"></div><button class="btn secondary" id="resetBtn">重設遊戲進度</button></section>
+<section class="panel footertext">此平台提供國七程度的原創數學練習，不包含任何翰林課本原題。七上章節名稱與順序應依學生實際使用的版本核對。所有資料僅儲存在此瀏覽器，不會同步到其他裝置。</section>
+</aside>
+</div></div>
+<script>
+"use strict";
+const CHAPTERS=[
+ {name:"七上① 數與數線",icon:"🌲",enemy:"整數史萊姆",emoji:"👾",hp:180},
+ {name:"七上② 標準分解式與分數運算",icon:"⛰️",enemy:"質因數巨人",emoji:"🗿",hp:200},
+ {name:"七上③ 一元一次方程式",icon:"🏰",enemy:"代數守衛",emoji:"🤖",hp:220},
+ {name:"七下① 二元一次聯立方程式",icon:"⚔️",enemy:"雙生魔像",emoji:"👹",hp:240},
+ {name:"七下② 直角坐標與方程式圖形",icon:"🧭",enemy:"座標幻影",emoji:"👻",hp:260},
+ {name:"七下③ 比例",icon:"⚖️",enemy:"比例鍊金師",emoji:"🧟",hp:280},
+ {name:"七下④ 一元一次不等式",icon:"🔥",enemy:"不等式魔獸",emoji:"😈",hp:300},
+ {name:"七下⑤ 統計圖表與統計數據",icon:"📊",enemy:"數據守衛",emoji:"🦾",hp:320},
+ {name:"七下⑥ 線對稱與三視圖",icon:"🐉",enemy:"幾何魔龍",emoji:"🐲",hp:350}
+];
+const KEY="math-quest-v3";
+const initial=()=>({chapter:0,unlocked:0,difficulty:0,hp:100,enemyHp:180,xp:0,combo:0,wins:0,attempts:0,correct:0,mistakes:[],recent:[],round:1});
+let state=initial();
+try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved&&Number.isInteger(saved.chapter)&&saved.chapter>=0&&saved.chapter<CHAPTERS.length){state={...initial(),...saved};state.unlocked=Math.max(0,Math.min(CHAPTERS.length-1,state.unlocked));state.difficulty=Math.max(0,Math.min(2,state.difficulty));state.mistakes=Array.isArray(state.mistakes)?state.mistakes:[];state.recent=Array.isArray(state.recent)?state.recent:[];}}catch(e){}
+let question=null,selected=null,mode="battle",reviewIndex=0,showHint=false,phase="question";
+const $=id=>document.getElementById(id),rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=rand(0,i);[b[i],b[j]]=[b[j],b[i]];}return b;}
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a;}
+function fraction(n,d){const g=gcd(n,d);return (n/g)+"/"+(d/g);}
+function generate(ch,d){
+ const R=rand, x=R(3,12),y=R(2,9),z=R(1,8),k=R(2,6),n=R(-14,14),m=R(-10,10), t=R(0,3);
+ let prompt="",ans=0,why="",hint="",topic="",custom=null;
+ const signed=v=>v<0?"- "+Math.abs(v):"+ "+v;
+ if(ch===0){
+  if(d===0){
+   if(t===0){ans=n+m;prompt="("+n+") + ("+m+") = ?";why=n+" + ("+m+") = "+ans;hint="先把加法轉換成數線上的移動。";topic="正負數的加減";}
+   if(t===1){ans=n-m;prompt="("+n+") - ("+m+") = ?";why=n+" - ("+m+") = "+ans;hint="減去一個數，等於加上它的相反數。";topic="正負數的加減";}
+   if(t===2){ans=Math.abs(n)-Math.abs(m);prompt="|"+n+"| - |"+m+"| = ?";why=Math.abs(n)+" - "+Math.abs(m)+" = "+ans;hint="先分別取絕對值。";topic="數與數線";}
+   if(t===3){ans=n*m;prompt="("+n+") × ("+m+") = ?";why="依乘法符號規則，結果為 "+ans;hint="先看兩個數的正負號。";topic="正負數的乘除";}
+  }else if(d===1){
+   if(t===0){ans=n*m+z;prompt="("+n+") × ("+m+") + "+z+" = ?";why="先算乘法 "+(n*m)+"，再加 "+z+"，得到 "+ans;hint="先乘除後加減。";topic="整數混合運算";}
+   if(t===1){ans=n*n-m*z;prompt="("+n+")² - ("+m+") × "+z+" = ?";why=(n*n)+" - ("+(m*z)+") = "+ans;hint="注意負數平方及運算順序。";topic="指數記法";}
+   if(t===2){ans=Math.abs(n-m)+Math.abs(m);prompt="|"+n+" - ("+m+")| + |"+m+"| = ?";why="|"+(n-m)+"| + "+Math.abs(m)+" = "+ans;hint="先算絕對值符號裡的運算。";topic="絕對值與混合運算";}
+   if(t===3){ans=n*m-z*k;prompt="("+n+") × ("+m+") - "+z+" × "+k+" = ?";why=(n*m)+" - "+(z*k)+" = "+ans;hint="先把兩組乘法算完。";topic="整數混合運算";}
+  }else{
+   if(t===0){ans=n*n-m*z+Math.abs(m);prompt="("+n+")² - ("+m+") × "+z+" + |"+m+"| = ?";why=(n*n)+" - ("+(m*z)+") + "+Math.abs(m)+" = "+ans;hint="注意平方、絕對值以及乘法優先順序。";topic="段考整數綜合題";}
+   if(t===1){ans=(n-m)*k+Math.abs(n);prompt="["+n+" - ("+m+")] × "+k+" + |"+n+"| = ?";why="("+ (n-m) +") × "+k+" + "+Math.abs(n)+" = "+ans;hint="先去括號，再乘法，最後相加。";topic="段考整數綜合題";}
+   if(t===2){ans=(n<0?-1:1)*Math.pow(Math.abs(n),2)-m;prompt="已知 a="+n+"，b="+m+"，求 a|a| - b。";why=n+" × "+Math.abs(n)+" - ("+m+") = "+ans;hint="a|a| 代表 a 乘以 a 的絕對值。";topic="數與代數綜合";}
+   if(t===3){ans=(n-m)*(-z)+k;prompt="["+n+" - ("+m+")] × (-"+z+") + "+k+" = ?";why="("+ (n-m) +") × (-"+z+") + "+k+" = "+ans;hint="先算中括號，再判斷乘法的正負號。";topic="段考整數綜合題";}
+  }
+ }else if(ch===1){
+  const a=x*k,b=y*k,g=gcd(a,b),l=a*b/g;
+  if(d===0){
+   if(t===0){ans=g;prompt=a+" 與 "+b+" 的最大公因數是？";why="列出共同因數，最大的是 "+g;hint="先做質因數分解。";topic="最大公因數";}
+   if(t===1){ans=l;prompt=a+" 與 "+b+" 的最小公倍數是？";why=a+" × "+b+" ÷ "+g+" = "+l;hint="利用最大公因數與最小公倍數的關係。";topic="最小公倍數";}
+   if(t===2){ans=2*x;prompt="將 "+(x*x)+" × "+(x*x)+" ÷ "+(x*x/x)+" 的指數部分簡化：若原式為 "+x+"² × "+x+"² ÷ "+x+"，數值是多少？";ans=x*x*x;why=x+"² × "+x+"² ÷ "+x+" = "+x+"³ = "+ans;hint="同底數相乘指數相加，除法指數相減。";topic="指數律";}
+   if(t===3){ans=k*x;prompt="有 "+(k*x)+" 個物品，每 "+k+" 個裝一盒，裝滿後共有幾盒？";ans=x;why=(k*x)+" ÷ "+k+" = "+x;hint="使用除法計算盒數。";topic="因數與倍數";}
+  }else if(d===1){
+   if(t===0){ans=fraction(x+y,k);prompt=x+"/"+k+" + "+y+"/"+k+" = ?（最簡分數）";why="同分母相加後約分，得到 "+ans;hint="先將分子相加，再約分。";topic="分數四則運算";}
+   if(t===1){ans=fraction(x*y,k*z);prompt=x+"/"+k+" × "+y+"/"+z+" = ?（最簡分數）";why="分子 "+x+"×"+y+"，分母 "+k+"×"+z+"，約分後為 "+ans;hint="先約分會比較容易。";topic="分數乘法";}
+   if(t===2){ans=fraction(x*k-y*z,k*z);prompt=x+"/"+z+" - "+y+"/"+k+" = ?（最簡分數）";why="通分後分子為 "+(x*k)+" - "+(y*z)+"，約分得 "+ans;hint="先求兩分母的共同倍數。";topic="異分母分數減法";}
+   if(t===3){ans=gcd(a,b);prompt="將 "+a+" 顆糖和 "+b+" 塊餅乾平均分成最多份完全相同、且沒有剩餘的禮物包，可分幾包？";why="最多份數等於 "+a+" 與 "+b+" 的最大公因數 "+ans;hint="這是最大公因數的生活應用。";topic="公因數應用";}
+  }else{
+   if(t===0){ans=fraction((x+y)*z,k*y);prompt="("+x+"/"+k+" + "+y+"/"+k+") × "+z+"/"+y+" = ?（最簡分數）";why="先同分母相加，得到 "+(x+y)+"/"+k+"，再乘以 "+z+"/"+y+"，結果為 "+ans;hint="先處理括號內，再做分數乘法。";topic="段考分數綜合";}
+   if(t===1){ans=fraction(x*k*z-y*k*k,k*z*k);prompt=x+"/"+k+" - "+y+"/"+z+" × "+k+"/"+k+" = ?（最簡分數）";ans=fraction(x*z-y*k,k*z);why="先算乘法 "+y+"/"+z+" × 1，再通分，得 "+ans;hint="先乘除後加減，並觀察是否能約分。";topic="段考分數綜合";}
+   if(t===2){ans=l;prompt="甲班每 "+a+" 天、乙班每 "+b+" 天舉辦活動，今天同時舉辦，至少再過幾天會同一天舉辦？";why="求 "+a+" 和 "+b+" 的最小公倍數，得到 "+l+" 天。";hint="找兩個周期共同出現的最短天數。";topic="公倍數生活題";}
+   if(t===3){ans=fraction(x*z+y*k,k*z);prompt=x+"/"+k+" + "+y+"/"+z+" = ?（最簡分數）";why="通分得到 ("+(x*z)+"+"+(y*k)+")/"+(k*z)+"，約分為 "+ans;hint="分母不同，要先通分。";topic="段考分數綜合";}
+  }
+ }else if(ch===2){
+  const sol=n,coef=k,off=m;
+  if(d===0){
+   ans=sol;prompt=coef+"x "+signed(off)+" = "+(coef*sol+off)+"，x = ?";why="移項後 "+coef+"x = "+(coef*sol)+"，所以 x = "+sol;hint="先將常數移到另一邊。";topic="解一元一次方程式";
+  }else if(d===1){
+   if(t<2){ans=sol;prompt=coef+"(x "+signed(off)+") = "+(coef*(sol+off))+"，x = ?";why="先除以 "+coef+"，得到 x "+signed(off)+" = "+(sol+off)+"，所以 x = "+sol;hint="先移除括號外的倍數。";topic="括號方程式";}
+   else{ans=sol;prompt=coef+"x "+signed(off)+" = "+(coef-1)+"x "+signed(sol+off)+"，x = ?";why="兩邊消去 "+(coef-1)+"x，整理後 x = "+sol;hint="把含 x 的項集中在等式一側。";topic="移項與合併同類項";}
+  }else{
+   if(t<2){const price=R(8,35),qty=R(3,9),fee=R(10,60);ans=qty;prompt="每件商品 "+price+" 元，另收運費 "+fee+" 元。結帳總價 "+(price*qty+fee)+" 元，共買幾件？";why="設購買 x 件，"+price+"x + "+fee+" = "+(price*qty+fee)+"，解得 x = "+qty;hint="先將總價表示成『單價×數量＋運費』。";topic="一元一次應用題";}
+   else{const age=R(11,18),gap=R(3,12);ans=age;prompt="哥哥比弟弟大 "+gap+" 歲，兩人年齡和為 "+(2*age+gap)+" 歲，弟弟幾歲？";why="設弟弟 x 歲，x + (x+"+gap+") = "+(2*age+gap)+"，得到 x = "+age;hint="設較小的年齡為未知數。";topic="年齡應用題";}
+  }
+ }else if(ch===3){
+  const sx=R(-6,12),sy=R(-6,12),a=R(2,6),b=R(2,6);
+  if(d===0){
+   if(t<2){ans=a*sx+b*sy;prompt="若 x = "+sx+"、y = "+sy+"，"+a+"x + "+b+"y = ?";why=a+"×("+sx+") + "+b+"×("+sy+") = "+ans;hint="將 x、y 分別代入。";topic="二元一次式代入";}
+   else{ans=sy;prompt="已知 "+a+"x + y = "+(a*sx+sy)+"，當 x = "+sx+" 時，y = ?";why="代入後 "+(a*sx)+" + y = "+(a*sx+sy)+"，因此 y = "+sy;hint="將已知 x 值代回原方程式。";topic="二元一次方程式";}
+  }else if(d===1){
+   ans=sx;prompt="聯立：x + y = "+(sx+sy)+"；"+a+"x + y = "+(a*sx+sy)+"。求 x。";why="兩式相減，得到 "+(a-1)+"x = "+((a-1)*sx)+"，所以 x = "+sx;hint="使用加減消去法，先消去 y。";topic="聯立方程式消去法";
+  }else{
+   if(t<2){const p=R(15,45),q=R(7,14),adult=R(4,12),child=R(3,9);ans=adult;prompt="某場活動成人票 "+p+" 元、學生票 "+q+" 元，共售出 "+(adult+child)+" 張，總收入 "+(p*adult+q*child)+" 元。成人票售出幾張？";why="設成人票 x、學生票 y：x+y="+(adult+child)+"，"+p+"x+"+q+"y="+(p*adult+q*child)+"，解得 x="+adult;hint="利用票數和金額列出二元一次聯立方程式。";topic="票價應用題";}
+   else{ans=sy;prompt="已知 2x + 3y = "+(2*sx+3*sy)+"，5x + 3y = "+(5*sx+3*sy)+"。求 y。";why="兩式相減得到 3x="+(3*sx)+"，x="+sx+"；代回得到 y="+sy;hint="先用消去法求一個未知數。";topic="聯立方程式綜合";}
+  }
+ }else if(ch===4){
+  const xx=R(-9,9),yy=R(-9,9),slope=R(2,6),intercept=R(-9,9);
+  if(d===0){
+   if(t<2){ans=xx>0?(yy>0?1:yy<0?4:0):(xx<0?(yy>0?2:yy<0?3:0):0);prompt="點 P("+xx+","+yy+") 位於第幾象限？若在坐標軸上則選 0。";why="根據 x、y 的正負號判斷象限，答案是 "+ans;hint="第一象限兩坐標皆正，依逆時針方向編號。";topic="直角坐標平面";}
+   else{ans=yy;prompt="點 A("+xx+","+yy+") 的 y 坐標是多少？";why="有序數對的第二個數是 y 坐標："+yy;hint="點的坐標順序為 (x,y)。";topic="直角坐標平面";}
+  }else if(d===1){
+   ans=slope*xx+intercept;prompt="直線 y = "+slope+"x "+signed(intercept)+"，當 x = "+xx+" 時，y = ?";why=slope+"×("+xx+") "+signed(intercept)+" = "+ans;hint="把 x 代入直線方程式。";topic="二元一次方程式圖形";
+  }else{
+   if(t<2){ans=intercept;prompt="直線 "+slope+"x - y = "+(-intercept)+"，與 y 軸的交點 y 坐標是多少？";why="令 x=0，得到 -y="+(-intercept)+"，所以 y="+intercept;hint="與 y 軸相交的位置，其 x 坐標為 0。";topic="截距應用";}
+   else{ans=slope;prompt="一條直線通過 (0,"+intercept+") 與 (2,"+(intercept+2*slope)+")，每當 x 增加 1，y 增加多少？";why="y 的變化量為 "+(2*slope)+"，x 變化 2，所以每 1 單位增加 "+slope;hint="比較兩個點的 x 與 y 變化量。";topic="直線與坐標推理";}
+  }
+ }else if(ch===5){
+  if(d===0){
+   ans=x*k;prompt="若 a:b = "+x+":"+y+"，且 b = "+(y*k)+"，則 a = ?";why="倍數為 "+k+"，所以 a="+x+"×"+k+"="+ans;hint="先確認 b 是比值中的幾倍。";topic="比例式";
+  }else if(d===1){
+   if(t<2){ans=x*k;prompt="y 與 x 成正比，x="+y+" 時 y="+(y*k)+"；當 x="+x+" 時，y = ?";why="比例常數為 "+k+"，因此 y="+k+"×"+x+"="+ans;hint="正比關係中 y/x 固定。";topic="正比";}
+   else{ans=x*y;prompt="y 與 x 成反比，x="+k+" 時 y="+(x*y)+"；當 x="+(k)+" 時，x×y = ?";why="反比關係中乘積保持不變，因此為 "+(k*(x*y));ans=k*x*y;hint="反比關係中兩變數的乘積不變。";topic="反比";}
+  }else{
+   if(t<2){const item=R(3,9),price=R(6,20),need=R(10,25);ans=fraction(price*need,item);custom=null;prompt=item+" 件商品售價 "+price+" 元，若單價不變，購買 "+need+" 件需多少元？（最簡分數）";why="每件 "+price+"/"+item+" 元，買 "+need+" 件共 "+ans+" 元。";hint="這是正比；先找每件的價格。";topic="正比應用";}
+   else{const workers=R(3,8),days=R(4,10),newWorkers=R(2,9);ans=fraction(workers*days,newWorkers);prompt=workers+" 人完成工作要 "+days+" 天，效率相同且工作量固定，改由 "+newWorkers+" 人完成，需幾天？（最簡分數）";why="人數×天數固定，得到 "+workers+"×"+days+"/"+newWorkers+" = "+ans+" 天。";hint="人數與天數成反比。";topic="反比應用";}
+  }
+ }else if(ch===6){
+  const bound=R(-9,15),coef=R(2,7);
+  if(d===0){
+   ans=bound+1;prompt="x > "+bound+"，最小整數解為多少？";why="大於 "+bound+" 的最小整數是 "+ans;hint="嚴格大於不包含邊界值。";topic="不等式的整數解";
+  }else if(d===1){
+   ans=bound;prompt=coef+"x "+signed(m)+" ≥ "+(coef*bound+m)+"，求 x 的最小整數解。";why=coef+"x ≥ "+(coef*bound)+"，所以 x ≥ "+bound+"，最小整數解是 "+bound;hint="移項後除以正數，不等號方向不變。";topic="解一元一次不等式";
+  }else{
+   if(t<2){ans=bound+1;prompt="-"+coef+"x < "+(-coef*bound)+"，求最小整數解。";why="兩邊除以 -"+coef+"，不等號反向：x > "+bound+"，因此最小整數解為 "+(bound+1);hint="不等式除以負數時，記得改變不等號方向。";topic="不等式與負數";}
+   else{const fee=R(10,60),unit=R(12,35),budget=R(130,250);ans=Math.floor((budget-fee)/unit);prompt="入場費 "+fee+" 元，每次遊戲另付 "+unit+" 元，預算不超過 "+budget+" 元，最多可玩幾次？";why="設次數 x，"+fee+"+"+unit+"x ≤ "+budget+"，所以 x ≤ "+((budget-fee)/unit)+"，最多 "+ans+" 次。";hint="先列出總費用不超過預算的不等式。";topic="生活不等式應用";}
+  }
+ }else if(ch===7){
+  const list=[R(3,15),R(3,15),R(3,15),R(3,15),R(3,15)].sort((a,b)=>a-b),sum=list.reduce((a,b)=>a+b,0);
+  if(d===0){
+   ans=list[2];prompt="資料 "+list.join("、")+" 的中位數是多少？";why="排序後位於正中央的第三個數是 "+ans;hint="先由小到大排序。";topic="中位數";
+  }else if(d===1){
+   if(t<2){ans=sum/5;prompt="五筆成績 "+list.join("、")+"，平均數為多少？";why="總和 "+sum+"，除以 5 得 "+ans;hint="平均數等於總和除以筆數。";topic="平均數";}
+   else{const a=R(4,12),b=R(1,9);ans=R(0,0)+a+b;prompt="甲班男生 "+a+" 人、女生 "+b+" 人，合計共有多少人？";why=a+"+"+b+"="+ans;hint="從列聯表兩類人數加總。";topic="列聯表";}
+  }else{
+   if(t<2){const avg=R(60,90),scores=[R(50,100),R(50,100),R(50,100),R(50,100)];ans=5*avg-scores.reduce((a,b)=>a+b,0);prompt="5 次考試平均 "+avg+" 分，其中 4 次分數是 "+scores.join("、")+"，第 5 次分數應為多少？（純代數計算）";why="總分應為 "+(5*avg)+"，扣除前四次 "+scores.reduce((a,b)=>a+b,0)+"，得到 "+ans;hint="平均數×筆數等於總和。";topic="平均數反推";}
+   else{const a=R(3,9),b=R(3,9),c=R(3,9);ans=b;prompt="某統計表數值為 "+a+"、"+b+"、"+b+"、"+c+"、"+b+"，眾數是多少？";why=b+" 出現 3 次，因此是眾數。";hint="眾數是出現頻率最高的值。";topic="眾數";}
+  }
+ }else{
+  if(d===0){
+   ans=R(2,8);prompt="一個正方體有 6 個面。若有 "+ans+" 個互不重疊的正方體，全部共有多少個面？";why=ans+"×6="+(ans*6)+" 個面。";custom=[String(ans*6),String(ans*4),String(ans*5),String(ans*8)];ans=ans*6;hint="正方體共有 6 個平面。";topic="三視圖與立體圖形";
+  }else if(d===1){
+   if(t<2){ans=x;prompt="線對稱圖形上，點 P 與其對稱點 P' 到對稱軸距離相等。已知 P 到對稱軸距離 "+x+" 公分，P' 距離多少？";why="線對稱的對應點到對稱軸距離相等，所以為 "+ans+" 公分。";hint="利用線對稱的距離性質。";topic="線對稱";}
+   else{ans=x*2;prompt="一個長方形沿著穿過中心且平行短邊的對稱軸對折，原本長度為 "+(x*2)+" 公分，對折後長邊方向長度多少？";ans=x;why="沿中央對折，長邊方向長度減半，得到 "+x;hint="中央對折會讓對折方向的尺寸減半。";topic="幾何對稱";}
+  }else{
+   if(t<2){const x1=R(-8,8),y1=R(-8,8),axis=R(-4,4);ans=2*axis-x1;prompt="點 P("+x1+","+y1+") 對直線 x="+axis+" 作鏡射，對應點 P' 的 x 坐標為何？";why="x 坐標對稱後為 2×"+axis+" - ("+x1+") = "+ans;hint="對稱軸是原點與對稱點連線的中垂線。";topic="坐標與線對稱";}
+   else{const blocks=R(3,8);ans=blocks;prompt="積木由 "+blocks+" 個正方體沿同一直線排成一排，從正上方看可以看到幾個正方形？";why="每個正方體頂面各形成一格，因此可看到 "+ans+" 格。";hint="從上方觀察，只計算可見的頂面。";topic="三視圖";}
+  }
+ }
+ const answer=String(ans);
+ let options;
+ if(custom){options=shuffle(custom);}
+ else if(typeof ans==="number"&&Number.isFinite(ans)){
+   const offsets=shuffle([-15,-10,-7,-4,-2,2,3,5,8,12,20]);
+   options=shuffle([answer,...offsets.slice(0,3).map(v=>String(ans+v))]);
+ }else{
+   const parts=answer.split("/").map(Number),num=parts[0],den=parts[1];
+   const pool=[answer];
+   for(const alt of [fraction(num+1,den),fraction(num-1,den),fraction(num,den+1),fraction(num+2,den+1),String(num+1),String(num-1)]){
+    if(alt!==answer&&!pool.includes(alt))pool.push(alt);
+    if(pool.length===4)break;
+   }
+   options=shuffle(pool);
+ }
+ options=[...new Set(options)];
+ while(options.length<4)options.push("其他 "+options.length);
+ return {prompt,answer,options,why,hint,topic,signature:ch+"|"+prompt,difficulty:d,chapter:ch};
+}
+function newQuestion(){
+ for(let i=0;i<30;i++){const q=generate(state.chapter,state.difficulty);if(!state.recent.includes(q.signature)){question=q;state.recent.push(q.signature);state.recent=state.recent.slice(-15);return;}}
+ question=generate(state.chapter,state.difficulty);
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function render(){
+ $("levelBadge").textContent="LV "+(Math.floor(state.xp/100)+1);
+ $("enemyName").textContent=CHAPTERS[state.chapter].enemy;
+ $("enemyText").textContent=state.enemyHp+" / "+CHAPTERS[state.chapter].hp+" HP";
+ $("enemyBar").style.width=(100*state.enemyHp/CHAPTERS[state.chapter].hp)+"%";
+ $("heroText").textContent=state.hp+" / 100 HP";$("heroBar").style.width=state.hp+"%";
+ $("enemyArt").innerHTML=CHAPTERS[state.chapter].emoji+"<span>"+CHAPTERS[state.chapter].enemy+"</span>";
+ $("battleTitle").textContent="第 "+(state.chapter+1)+" 區域 · "+CHAPTERS[state.chapter].name;
+ $("xpNum").textContent=state.xp;$("comboNum").textContent=state.combo;$("winsNum").textContent=state.wins;
+ $("attemptsNum").textContent=state.attempts;$("accuracyNum").textContent=state.attempts?Math.round(state.correct/state.attempts*100)+"%":"0%";
+ $("mistakeNum").textContent=state.mistakes.length;
+ $("chapters").innerHTML=CHAPTERS.map((c,i)=>'<button class="chapter '+(i===state.chapter?'selected':'')+'" data-chapter="'+i+'" '+(i>state.unlocked?'disabled':'')+'><strong>'+(i>state.unlocked?'🔒 ':c.icon+' ')+c.name+'</strong><small>'+(i>state.unlocked?'尚未解鎖':'怪物：'+c.enemy)+'</small></button>').join("");
+ document.querySelectorAll("[data-chapter]").forEach(el=>el.onclick=()=>switchChapter(Number(el.dataset.chapter)));
+ $("reviewBtn").textContent="📖 錯題復仇（"+state.mistakes.length+"）";
+ $("reviewBtn").disabled=!state.mistakes.length||phase!=="question"&&phase!=="feedback";
+ document.querySelectorAll("[data-diff]").forEach(el=>{el.classList.toggle("active",Number(el.dataset.diff)===state.difficulty);el.disabled=mode==="review"||selected!==null||phase==="win"||phase==="lose";});
+ $("difficulties").classList.toggle("hidden",mode==="review"||phase==="win"||phase==="lose");
+ $("roundText").textContent=mode==="review"?"錯題 "+(reviewIndex+1)+"/"+state.mistakes.length:"第 "+state.round+" 回合";
+ $("nextBtn").classList.add("hidden");$("continueBtn").classList.add("hidden");
+ $("hintBox").classList.toggle("hidden",!showHint);
+ const q=mode==="review"?state.mistakes[reviewIndex]:question;
+ if(phase==="win"||phase==="lose"){
+  $("topicText").textContent=phase==="win"?"戰鬥勝利":"戰鬥失敗";
+  $("questionText").textContent=phase==="win"?"🎉 打敗 "+CHAPTERS[state.chapter].enemy+"！":"💔 勇者倒下了，再挑戰一次吧！";
+  $("options").innerHTML="";$("hintBtn").classList.add("hidden");$("hintBox").classList.add("hidden");
+  $("feedbackBox").className="feedback";$("feedbackBox").textContent=phase==="win"?"本區域通關，獲得額外 50 XP。下一區域已解鎖。":"保留經驗值和錯題記錄，恢復生命後可以繼續挑戰。";
+  $("continueBtn").textContent=phase==="win"?"前往下一場戰鬥 ➜":"恢復生命重試";
+  $("continueBtn").classList.remove("hidden");
+  return;
+ }
+ $("hintBtn").classList.remove("hidden");$("hintBtn").textContent=showHint?"隱藏提示":"💡 查看提示";
+ $("topicText").textContent=mode==="review"?"錯題復仇 · "+q.topic:q.topic+" · "+["基礎","進階","挑戰"][state.difficulty];
+ $("questionText").textContent=q.prompt;
+ $("options").innerHTML="";
+ q.options.forEach((value,i)=>{
+  const btn=document.createElement("button");btn.className="option";
+  btn.innerHTML="<small>"+("ABCD"[i])+"</small>";
+  btn.appendChild(document.createTextNode(value));
+  if(selected!==null){btn.disabled=true;if(value===q.answer)btn.classList.add("correct");else if(value===selected)btn.classList.add("incorrect");}
+  btn.onclick=()=>choose(value);$("options").appendChild(btn);
+ });
+ $("hintBox").textContent=q.hint;
+ const feedback=$("feedbackBox");feedback.className="feedback hidden";
+ if(selected!==null){
+  feedback.className="feedback "+(selected===q.answer?"ok":"bad");
+  feedback.textContent=(selected===q.answer?"✅ 答對了！":"❌ 答錯了，正確答案是 "+q.answer+"。")+" "+q.why;
+  $("nextBtn").textContent=mode==="review"?"下一道錯題 ➜":"下一道隨機題 ➜";
+  $("nextBtn").classList.remove("hidden");
+ }
+}
+function choose(value){
+ if(selected!==null||phase!=="question")return;
+ const q=mode==="review"?state.mistakes[reviewIndex]:question;
+ selected=value;phase="feedback";
+ if(mode==="battle"){
+  state.attempts++;
+  if(value===q.answer){state.correct++;const damage=[20,30,45][state.difficulty]+(state.combo>=2?15:0);state.enemyHp=Math.max(0,state.enemyHp-damage);state.xp+=[10,20,30][state.difficulty];state.combo++;}
+  else {state.hp=Math.max(0,state.hp-20);state.combo=0;if(!state.mistakes.some(t=>t.signature===q.signature))state.mistakes.push(q);}
+  save();
+ }
+ render();
+}
+function goNext(){
+ selected=null;showHint=false;
+ if(mode==="review"){
+  reviewIndex++;if(reviewIndex>=state.mistakes.length){mode="battle";reviewIndex=0;newQuestion();}
+  phase="question";render();return;
+ }
+ if(state.enemyHp===0){phase="win";state.xp+=50;state.wins++;state.unlocked=Math.max(state.unlocked,Math.min(CHAPTERS.length-1,state.chapter+1));save();render();return;}
+ if(state.hp===0){phase="lose";render();return;}
+ state.round++;newQuestion();phase="question";save();render();
+}
+function continueBattle(){
+ if(phase==="win"&&state.chapter<CHAPTERS.length-1)state.chapter++;
+ state.enemyHp=CHAPTERS[state.chapter].hp;state.hp=100;state.combo=0;state.round=1;mode="battle";phase="question";selected=null;showHint=false;newQuestion();save();render();
+}
+function switchChapter(i){
+ if(i>state.unlocked)return;
+ state.chapter=i;state.enemyHp=CHAPTERS[i].hp;state.hp=100;state.combo=0;state.round=1;mode="battle";phase="question";selected=null;showHint=false;newQuestion();save();render();
+}
+$("hintBtn").onclick=()=>{showHint=!showHint;render();};
+$("reviewBtn").onclick=()=>{if(!state.mistakes.length)return;mode="review";reviewIndex=0;selected=null;phase="question";showHint=false;render();};
+$("nextBtn").onclick=goNext;$("continueBtn").onclick=continueBattle;
+document.querySelectorAll("[data-diff]").forEach(el=>el.onclick=()=>{state.difficulty=Number(el.dataset.diff);selected=null;phase="question";showHint=false;newQuestion();save();render();});
+$("resetBtn").onclick=()=>{if(!confirm("確定要清除本機的遊戲進度及錯題紀錄？"))return;state=initial();mode="battle";phase="question";selected=null;showHint=false;newQuestion();save();render();};
+newQuestion();render();
+</script>
+</body></html>

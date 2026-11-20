@@ -26,14 +26,14 @@
 .micro{font-size:13px;color:#6f8198}.metric{font-size:29px;font-weight:850;margin:5px 0 20px}.metric small{display:block;font-size:12px;color:#758ba3;font-weight:500}.foot{font-size:12px;color:#7d91a5;line-height:1.7}.reset{width:100%}
 @media(max-width:1060px){.layout{grid-template-columns:220px minmax(0,1fr)}.layout aside{grid-column:1/-1}.asidePanel{display:inline-block;vertical-align:top;width:49%;margin-right:1%}}
 @media(max-width:720px){.layout{display:block}.wrap{padding:12px}.panel{padding:15px}.levels{grid-template-columns:repeat(2,minmax(0,1fr))}.chapterList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.chapter{margin:0}.hero{padding:14px}.line-grid .tick{min-width:31px}.asidePanel{display:block;width:100%}}
-</style></head><body>
+.reward{background:#fff4da;border:1px solid #f1d48b;border-radius:18px;padding:18px;margin:15px auto;max-width:400px}.reward h2{margin:6px}.shopItem{width:100%;border:1px solid #d5e5f4;border-radius:12px;background:#f8fbff;margin:5px 0;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;color:#2b4564;font-weight:750}.shopItem small{color:#a66b12}.shopItem:hover{background:#edf7ff}</style></head><body>
 <div class="wrap"><header><div><div class="eyebrow">MATH QUEST · VERSION 4.0</div><h1>🏝️ 國七數學闖關島</h1><p class="caption">解謎、尋寶、挑戰｜七年級全年原創題庫</p></div><div class="badge">⭐ <span id="totalStars">0</span> 星</div></header>
 <div style="margin:0 0 18px;padding:18px 20px;border-radius:18px;background:linear-gradient(115deg,#173d61,#237b86);color:white;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><strong style="font-size:20px">🎮 新增：數學小遊戲館</strong><p style="margin:7px 0 0;color:#d9f5ef;font-size:13px">10 款互動遊戲｜數字消除、因數合成、坐標尋寶、鏡像拼圖等</p></div><a href="./games.html" style="background:#fff;color:#175676;padding:12px 18px;border-radius:12px;font-weight:800;text-decoration:none">立即開始玩 →</a></div>
 <div class="layout"><nav class="panel"><h2>📚 章節選擇</h2><div class="chapterList" id="chapterSelect"></div></nav>
 <main><div class="hero"><div class="eyebrow">目前冒險區域</div><h2 id="chapterHeading"></h2><p>每章六關 · 過關解鎖下一關 · 最多十八顆星</p></div>
 <div class="levels" id="levelMap"></div><section class="panel" id="gameBoard"></section></main>
 <aside><section class="panel asidePanel"><h2>🏅 學習進度</h2><div class="metric" id="progressText"></div><div class="metric" id="accuracy"></div><p class="micro">答題正確率</p><div class="metric" id="mistakeCount"></div><p class="micro">錯題紀錄數</p></section>
-<section class="panel asidePanel"><h2>💾 儲存與版本</h2><p class="foot">進度保存在這台裝置的瀏覽器。舊版 RPG 已備份到 GitHub 的 archive/rpg-v3.html。</p><button class="secondary reset" id="reset">清除 v4 進度</button><p class="foot">國七課程架構為原創練習安排，尚須依實際翰林教科書的年度及小節逐一核對。部分圖形題目前先以文字題實作。</p></section></aside></div></div>
+<section class="panel asidePanel"><h2>🎁 獎勵商店</h2><div class="metric">🪙 <span id="coins">0</span><small>金幣餘額</small></div><p class="micro">目前稱號：<b id="titleEquipped">數學新手</b></p><div id="shop"></div><p class="foot">新關卡首次通關可領一次寶箱。重玩可提升星等，不會重複獲得寶箱。</p></section><section class="panel asidePanel"><h2>💾 儲存與版本</h2><p class="foot">進度保存在這台裝置的瀏覽器。舊版 RPG 已備份到 GitHub 的 archive/rpg-v3.html。</p><button class="secondary reset" id="reset">清除 v4 進度</button><p class="foot">國七課程架構為原創練習安排，尚須依實際翰林教科書的年度及小節逐一核對。部分圖形題目前先以文字題實作。</p></section></aside></div></div>
 <script>
 const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
 function shuffle(items){const a=[...items];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -185,10 +185,10 @@ const LEVELS=[
 ];
 const STORE="math-quest-puzzle-v4";
 const $=id=>document.getElementById(id);
-const fresh=()=>({chapter:0,unlockedChapter:0,stars:{},levelUnlock:{},attempts:0,correct:0,errors:[],bestCombo:0});
+const fresh=()=>({chapter:0,unlockedChapter:0,stars:{},levelUnlock:{},attempts:0,correct:0,errors:[],bestCombo:0,coins:0,chests:{},openedChests:{},ownedItems:[],equipped:"starter"});
 let state=fresh();
-try{const raw=JSON.parse(localStorage.getItem(STORE));if(raw&&typeof raw==="object"){state={...fresh(),...raw};state.stars=state.stars||{};state.levelUnlock=state.levelUnlock||{};state.errors=Array.isArray(state.errors)?state.errors:[];}}catch(e){}
-let currentLevel=null,questions=[],index=0,selected=null,mistakes=0,hints=0,finished=false,combo=0,sortPicks=[],notice="",showHint=false,answerFeedback="",reviewMode=false;
+try{const raw=JSON.parse(localStorage.getItem(STORE));if(raw&&typeof raw==="object"){state={...fresh(),...raw};state.stars=state.stars||{};state.levelUnlock=state.levelUnlock||{};state.errors=Array.isArray(state.errors)?state.errors:[];state.chests=state.chests||{};state.openedChests=state.openedChests||{};state.ownedItems=Array.isArray(state.ownedItems)?state.ownedItems:[];state.coins=Number.isFinite(state.coins)?state.coins:0;state.equipped=state.equipped||"starter";}}catch(e){}
+let openedReward=null,currentLevel=null,questions=[],index=0,selected=null,mistakes=0,hints=0,finished=false,combo=0,sortPicks=[],notice="",showHint=false,answerFeedback="",reviewMode=false;
 function persist(){try{localStorage.setItem(STORE,JSON.stringify(state));}catch(e){}}
 function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function chapterKey(ch,lv){return ch+"-"+lv;}
@@ -210,7 +210,7 @@ function makeQuestion(ch,lv,idx,exclude){
 function totalSteps(lv){return [3,3,3,3,4,5][lv];}
 function startLevel(lv){
  if(lv>chapterUnlock(state.chapter))return;
- currentLevel=lv;index=0;mistakes=0;hints=0;combo=0;selected=null;finished=false;reviewMode=false;notice="";answerFeedback="";showHint=false;questions=[];
+ currentLevel=lv;index=0;mistakes=0;hints=0;combo=0;selected=null;finished=false;openedReward=null;reviewMode=false;notice="";answerFeedback="";showHint=false;questions=[];
  const used=[];for(let i=0;i<totalSteps(lv);i++){let q=makeQuestion(state.chapter,lv,i,used);questions.push(q);used.push(q.title);}
  render();
 }
@@ -231,10 +231,13 @@ function advance(){
  if(index+1<questions.length){index++;selected=null;notice="";answerFeedback="";showHint=false;sortPicks=[];render();}
  else{finishLevel();}
 }
+const SHOP=[{id:"explorer",icon:"🧭",name:"尋寶高手",price:70},{id:"genius",icon:"🧠",name:"數學達人",price:150},{id:"legend",icon:"👑",name:"解謎傳說",price:300}];
+function openChest(){const key=chapterKey(state.chapter,currentLevel);if(!state.chests[key]||state.openedChests[key])return;const payout=[30,40,50,60,80,100][Math.floor(Math.random()*6)]+(currentLevel===5?30:0);state.coins+=payout;state.openedChests[key]=payout;delete state.chests[key];openedReward=payout;persist();render();}
+function buyItem(id){const item=SHOP.find(x=>x.id===id);if(!item)return;if(state.ownedItems.includes(id)){state.equipped=id;}else if(state.coins>=item.price){state.coins-=item.price;state.ownedItems.push(id);state.equipped=id;}else{return;}persist();render();}
 function finishLevel(){
  finished=true;
  const stars=mistakes===0&&hints===0?3:mistakes<=1&&hints<=1?2:1;
- const key=chapterKey(state.chapter,currentLevel);state.stars[key]=Math.max(stars,state.stars[key]||0);
+ const key=chapterKey(state.chapter,currentLevel);if(!state.stars[key]&&!state.openedChests[key])state.chests[key]=true;openedReward=null;state.stars[key]=Math.max(stars,state.stars[key]||0);
  if(currentLevel<5)state.levelUnlock[state.chapter]=Math.max(chapterUnlock(state.chapter),currentLevel+1);
  if(currentLevel===5&&state.chapter<CHAPTERS.length-1)state.unlockedChapter=Math.max(state.unlockedChapter,state.chapter+1);
  persist();render();
@@ -247,6 +250,10 @@ function renderMap(){
  document.querySelectorAll("[data-lv]").forEach(b=>b.onclick=()=>startLevel(Number(b.dataset.lv)));
  const stars=Object.values(state.stars).reduce((s,n)=>s+n,0);
  $("totalStars").textContent=stars;
+ $("coins").textContent=state.coins;
+ $("titleEquipped").textContent=SHOP.find(i=>i.id===state.equipped)?.name||"數學新手";
+ $("shop").innerHTML=SHOP.map(i=>'<button class="shopItem" data-item="'+i.id+'"><span>'+i.icon+' '+i.name+'</span><small>'+(state.equipped===i.id?"使用中":state.ownedItems.includes(i.id)?"使用":i.price+" 🪙")+'</small></button>').join("");
+ document.querySelectorAll("[data-item]").forEach(b=>b.onclick=()=>buyItem(b.dataset.item));
  $("accuracy").textContent=state.attempts?Math.round(state.correct/state.attempts*100)+"%":"0%";
  $("mistakeCount").textContent=state.errors.length;
  $("progressText").textContent="已完成 "+Object.keys(state.stars).length+" / "+(CHAPTERS.length*6)+" 關";
@@ -257,7 +264,10 @@ function renderQuestion(){
  if(currentLevel===null){board.innerHTML='<div class="empty"><div class="big-icon">🗺️</div><h2>選一個關卡，開始解謎！</h2><p>不再扣怪物血：每一關都有不同任務，答對才能前進。</p><button id="quickStart" class="primary">開始第 '+(chapterUnlock(state.chapter)+1)+' 關 →</button></div>';$("quickStart").onclick=()=>startLevel(chapterUnlock(state.chapter));return;}
  if(finished){
   const stars=numStars(state.chapter,currentLevel);
-  board.innerHTML='<div class="empty"><div class="big-icon">🎉</div><p class="eyebrow">關卡完成</p><h2>'+LEVELS[currentLevel][0]+' 過關！</h2><div class="huge-stars">'+"★".repeat(stars)+"☆".repeat(3-stars)+'</div><p>答錯 '+mistakes+' 次 · 使用提示 '+hints+' 次</p><div class="action-row"><button class="secondary" id="replay">重新挑戰</button><button class="primary" id="goNext">'+(currentLevel===5?'返回地圖':'下一關 →')+'</button></div></div>';
+  const chestKey=chapterKey(state.chapter,currentLevel),pending=!!state.chests[chestKey];
+  const reward=pending?'<div class="reward"><div class="big-icon">🎁</div><h2>獲得通關寶箱！</h2><p>開啟後可獲得 30–100 金幣，章節挑戰還有額外獎勵。</p><button class="primary" id="openChest">✨ 開啟寶箱</button></div>':openedReward!==null?'<div class="reward"><div class="big-icon">🪙</div><h2>獲得 '+openedReward+' 金幣！</h2><p>可以到獎勵商店兌換稱號。</p></div>':'<p>本關的首次通關寶箱已領取；重玩可提高星等。</p>';
+  board.innerHTML='<div class="empty"><div class="big-icon">🎉</div><p class="eyebrow">關卡完成</p><h2>'+LEVELS[currentLevel][0]+' 過關！</h2><div class="huge-stars">'+"★".repeat(stars)+"☆".repeat(3-stars)+'</div><p>答錯 '+mistakes+' 次 · 使用提示 '+hints+' 次</p>'+reward+'<div class="action-row"><button class="secondary" id="replay">重新挑戰</button><button class="primary" id="goNext" '+(pending?'disabled':'')+'>'+(currentLevel===5?'返回地圖':'下一關 →')+'</button></div></div>';
+  const chest=$("openChest");if(chest)chest.onclick=openChest;
   $("replay").onclick=()=>startLevel(currentLevel);$("goNext").onclick=()=>{if(currentLevel<5)startLevel(currentLevel+1);else{currentLevel=null;render();}};return;
  }
  const q=questions[index];

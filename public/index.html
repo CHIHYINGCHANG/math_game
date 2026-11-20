@@ -41,7 +41,7 @@ h2{font-size:19px;margin:0 0 13px}h3{margin:0 0 8px}.muted{color:#6a7b91}.eyebro
 </head>
 <body>
 <div class="wrap">
-<header><div class="brand"><small>MATH QUEST · GRADE 7</small><h1>⚔️ 數學勇者傳說</h1><div class="muted">國七數學 RPG｜原創隨機題庫</div></div><div class="tag" id="levelBadge">LV 1</div></header>
+<header><div class="brand"><small>MATH QUEST · GRADE 7 · FULL YEAR</small><h1>⚔️ 數學勇者傳說</h1><div class="muted">國七全年 RPG｜段考進階隨機題庫</div></div><div class="tag" id="levelBadge">LV 1</div></header>
 <div class="layout">
 <main>
 <section class="panel battle" aria-label="戰鬥狀態">
@@ -61,7 +61,7 @@ h2{font-size:19px;margin:0 0 13px}h3{margin:0 0 8px}.muted{color:#6a7b91}.eyebro
 </section>
 </main>
 <aside>
-<section class="panel"><h2>🗺️ 冒險地圖</h2><div class="chapters" id="chapters"></div><div class="separator"></div><div class="footertext">每一區依知識點出題；題目數值與選項會隨機變化，並避免連續出現相同題目。</div></section>
+<section class="panel"><h2>🗺️ 冒險地圖</h2><div class="chapters" id="chapters"></div><div class="separator"></div><div class="footertext">每一區依知識點出題；題目涵蓋七上、七下九個單元，數值與選項會隨機變化，並避免連續出現相同題目。</div></section>
 <section class="panel"><h2>📈 學習成果</h2><p>已回答：<span class="count" id="attemptsNum">0</span> 題</p><p>正確率：<span class="count" id="accuracyNum">0%</span></p><p>錯題本：<span class="count" id="mistakeNum">0</span> 題</p><p>本機保存：<span class="count">已啟用</span></p><div class="separator"></div><button class="btn secondary" id="resetBtn">重設遊戲進度</button></section>
 <section class="panel footertext">此平台提供國七程度的原創數學練習，不包含任何翰林課本原題。七上章節名稱與順序應依學生實際使用的版本核對。所有資料僅儲存在此瀏覽器，不會同步到其他裝置。</section>
 </aside>
@@ -69,49 +69,157 @@ h2{font-size:19px;margin:0 0 13px}h3{margin:0 0 8px}.muted{color:#6a7b91}.eyebro
 <script>
 "use strict";
 const CHAPTERS=[
- {name:"數與數線",icon:"🌲",enemy:"森林史萊姆",emoji:"👾",hp:150},
- {name:"因數、倍數與分數",icon:"⛰️",enemy:"岩石巨人",emoji:"🗿",hp:180},
- {name:"一元一次方程式",icon:"🏰",enemy:"代數守衛",emoji:"🤖",hp:210},
- {name:"幾何與圖形",icon:"🐉",enemy:"幾何魔龍",emoji:"🐲",hp:240}
+ {name:"七上① 數與數線",icon:"🌲",enemy:"整數史萊姆",emoji:"👾",hp:180},
+ {name:"七上② 標準分解式與分數運算",icon:"⛰️",enemy:"質因數巨人",emoji:"🗿",hp:200},
+ {name:"七上③ 一元一次方程式",icon:"🏰",enemy:"代數守衛",emoji:"🤖",hp:220},
+ {name:"七下① 二元一次聯立方程式",icon:"⚔️",enemy:"雙生魔像",emoji:"👹",hp:240},
+ {name:"七下② 直角坐標與方程式圖形",icon:"🧭",enemy:"座標幻影",emoji:"👻",hp:260},
+ {name:"七下③ 比例",icon:"⚖️",enemy:"比例鍊金師",emoji:"🧟",hp:280},
+ {name:"七下④ 一元一次不等式",icon:"🔥",enemy:"不等式魔獸",emoji:"😈",hp:300},
+ {name:"七下⑤ 統計圖表與統計數據",icon:"📊",enemy:"數據守衛",emoji:"🦾",hp:320},
+ {name:"七下⑥ 線對稱與三視圖",icon:"🐉",enemy:"幾何魔龍",emoji:"🐲",hp:350}
 ];
-const KEY="math-quest-v1";
-const initial=()=>({chapter:0,unlocked:0,difficulty:0,hp:100,enemyHp:150,xp:0,combo:0,wins:0,attempts:0,correct:0,mistakes:[],recent:[],round:1});
+const KEY="math-quest-v3";
+const initial=()=>({chapter:0,unlocked:0,difficulty:0,hp:100,enemyHp:180,xp:0,combo:0,wins:0,attempts:0,correct:0,mistakes:[],recent:[],round:1});
 let state=initial();
-try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved&&Number.isInteger(saved.chapter)&&saved.chapter>=0&&saved.chapter<CHAPTERS.length){state={...initial(),...saved};state.unlocked=Math.max(0,Math.min(3,state.unlocked));state.difficulty=Math.max(0,Math.min(2,state.difficulty));state.mistakes=Array.isArray(state.mistakes)?state.mistakes:[];state.recent=Array.isArray(state.recent)?state.recent:[];}}catch(e){}
+try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved&&Number.isInteger(saved.chapter)&&saved.chapter>=0&&saved.chapter<CHAPTERS.length){state={...initial(),...saved};state.unlocked=Math.max(0,Math.min(CHAPTERS.length-1,state.unlocked));state.difficulty=Math.max(0,Math.min(2,state.difficulty));state.mistakes=Array.isArray(state.mistakes)?state.mistakes:[];state.recent=Array.isArray(state.recent)?state.recent:[];}}catch(e){}
 let question=null,selected=null,mode="battle",reviewIndex=0,showHint=false,phase="question";
 const $=id=>document.getElementById(id),rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=rand(0,i);[b[i],b[j]]=[b[j],b[i]];}return b;}
 function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a;}
 function fraction(n,d){const g=gcd(n,d);return (n/g)+"/"+(d/g);}
 function generate(ch,d){
- let prompt="",ans=0,why="",hint="",topic="",options=null,signature="";
- const type=rand(0,3),a=rand(-15,15),b=rand(-12,12);
+ const R=rand, x=R(3,12),y=R(2,9),z=R(1,8),k=R(2,6),n=R(-14,14),m=R(-10,10), t=R(0,3);
+ let prompt="",ans=0,why="",hint="",topic="",custom=null;
+ const signed=v=>v<0?"- "+Math.abs(v):"+ "+v;
  if(ch===0){
-  if(type===0){ans=a+b;prompt="("+a+") + ("+b+") = ?";why=a+" + ("+b+") = "+ans;hint="想像沿著數線向左或向右移動。";topic="整數加法";}
-  if(type===1){ans=a-b;prompt="("+a+") - ("+b+") = ?";why=a+" - ("+b+") = "+ans;hint="先把減法換成加上相反數。";topic="整數減法";}
-  if(type===2){const x=rand(-9,9),y=rand(-8,8);ans=x*y;prompt="("+x+") × ("+y+") = ?";why="先判斷符號，再算 "+Math.abs(x)+" × "+Math.abs(y)+" = "+Math.abs(ans)+"，答案 "+ans;hint="先判斷兩個因數的正負號。";topic="整數乘法";}
-  if(type===3){const x=rand(-30,-2);ans=Math.abs(x);prompt="|"+x+"| = ?";why="絕對值是與 0 的距離，所以答案是 "+ans;hint="想想數線上這個數到 0 的距離。";topic="絕對值";}
+  if(d===0){
+   if(t===0){ans=n+m;prompt="("+n+") + ("+m+") = ?";why=n+" + ("+m+") = "+ans;hint="先把加法轉換成數線上的移動。";topic="正負數的加減";}
+   if(t===1){ans=n-m;prompt="("+n+") - ("+m+") = ?";why=n+" - ("+m+") = "+ans;hint="減去一個數，等於加上它的相反數。";topic="正負數的加減";}
+   if(t===2){ans=Math.abs(n)-Math.abs(m);prompt="|"+n+"| - |"+m+"| = ?";why=Math.abs(n)+" - "+Math.abs(m)+" = "+ans;hint="先分別取絕對值。";topic="數與數線";}
+   if(t===3){ans=n*m;prompt="("+n+") × ("+m+") = ?";why="依乘法符號規則，結果為 "+ans;hint="先看兩個數的正負號。";topic="正負數的乘除";}
+  }else if(d===1){
+   if(t===0){ans=n*m+z;prompt="("+n+") × ("+m+") + "+z+" = ?";why="先算乘法 "+(n*m)+"，再加 "+z+"，得到 "+ans;hint="先乘除後加減。";topic="整數混合運算";}
+   if(t===1){ans=n*n-m*z;prompt="("+n+")² - ("+m+") × "+z+" = ?";why=(n*n)+" - ("+(m*z)+") = "+ans;hint="注意負數平方及運算順序。";topic="指數記法";}
+   if(t===2){ans=Math.abs(n-m)+Math.abs(m);prompt="|"+n+" - ("+m+")| + |"+m+"| = ?";why="|"+(n-m)+"| + "+Math.abs(m)+" = "+ans;hint="先算絕對值符號裡的運算。";topic="絕對值與混合運算";}
+   if(t===3){ans=n*m-z*k;prompt="("+n+") × ("+m+") - "+z+" × "+k+" = ?";why=(n*m)+" - "+(z*k)+" = "+ans;hint="先把兩組乘法算完。";topic="整數混合運算";}
+  }else{
+   if(t===0){ans=n*n-m*z+Math.abs(m);prompt="("+n+")² - ("+m+") × "+z+" + |"+m+"| = ?";why=(n*n)+" - ("+(m*z)+") + "+Math.abs(m)+" = "+ans;hint="注意平方、絕對值以及乘法優先順序。";topic="段考整數綜合題";}
+   if(t===1){ans=(n-m)*k+Math.abs(n);prompt="["+n+" - ("+m+")] × "+k+" + |"+n+"| = ?";why="("+ (n-m) +") × "+k+" + "+Math.abs(n)+" = "+ans;hint="先去括號，再乘法，最後相加。";topic="段考整數綜合題";}
+   if(t===2){ans=(n<0?-1:1)*Math.pow(Math.abs(n),2)-m;prompt="已知 a="+n+"，b="+m+"，求 a|a| - b。";why=n+" × "+Math.abs(n)+" - ("+m+") = "+ans;hint="a|a| 代表 a 乘以 a 的絕對值。";topic="數與代數綜合";}
+   if(t===3){ans=(n-m)*(-z)+k;prompt="["+n+" - ("+m+")] × (-"+z+") + "+k+" = ?";why="("+ (n-m) +") × (-"+z+") + "+k+" = "+ans;hint="先算中括號，再判斷乘法的正負號。";topic="段考整數綜合題";}
+  }
  }else if(ch===1){
-  if(type===0){const x=rand(12,60),y=rand(2,12);ans=gcd(x,y);prompt=x+" 和 "+y+" 的最大公因數是多少？";why="能同時整除兩數的最大正整數是 "+ans+"。";hint="可以先列出兩數的正因數。";topic="最大公因數";}
-  if(type===1){const x=rand(2,12),y=rand(2,12);ans=x*y/gcd(x,y);prompt=x+" 和 "+y+" 的最小公倍數是多少？";why="最小公倍數為 "+x+" × "+y+" ÷ "+gcd(x,y)+" = "+ans+"。";hint="列倍數或利用最大公因數。";topic="最小公倍數";}
-  if(type===2){const den=rand(3,12),num=rand(1,den-1),factor=rand(2,6);ans=fraction(num,den);prompt="將 "+(num*factor)+"/"+(den*factor)+" 約成最簡分數。";why="分子分母同除公因數，得到 "+ans+"。";hint="找分子與分母的最大公因數。";topic="分數約分";options=shuffle([ans,fraction(num,den+1),fraction(num+1,den),fraction(num,den*factor)]);options=[...new Set(options)];}
-  if(type===3){const den=rand(3,10),n1=rand(1,8),n2=rand(1,8);ans=fraction(n1+n2,den);prompt=n1+"/"+den+" + "+n2+"/"+den+" = ?（最簡分數）";why="同分母相加，分子相加後約分，得到 "+ans+"。";hint="分母相同時，先處理分子。";topic="分數加法";options=shuffle([ans,fraction(n1+n2,den+1),fraction(Math.abs(n1-n2)||1,den),fraction(n1+n2,den*2)]);options=[...new Set(options)];}
+  const a=x*k,b=y*k,g=gcd(a,b),l=a*b/g;
+  if(d===0){
+   if(t===0){ans=g;prompt=a+" 與 "+b+" 的最大公因數是？";why="列出共同因數，最大的是 "+g;hint="先做質因數分解。";topic="最大公因數";}
+   if(t===1){ans=l;prompt=a+" 與 "+b+" 的最小公倍數是？";why=a+" × "+b+" ÷ "+g+" = "+l;hint="利用最大公因數與最小公倍數的關係。";topic="最小公倍數";}
+   if(t===2){ans=2*x;prompt="將 "+(x*x)+" × "+(x*x)+" ÷ "+(x*x/x)+" 的指數部分簡化：若原式為 "+x+"² × "+x+"² ÷ "+x+"，數值是多少？";ans=x*x*x;why=x+"² × "+x+"² ÷ "+x+" = "+x+"³ = "+ans;hint="同底數相乘指數相加，除法指數相減。";topic="指數律";}
+   if(t===3){ans=k*x;prompt="有 "+(k*x)+" 個物品，每 "+k+" 個裝一盒，裝滿後共有幾盒？";ans=x;why=(k*x)+" ÷ "+k+" = "+x;hint="使用除法計算盒數。";topic="因數與倍數";}
+  }else if(d===1){
+   if(t===0){ans=fraction(x+y,k);prompt=x+"/"+k+" + "+y+"/"+k+" = ?（最簡分數）";why="同分母相加後約分，得到 "+ans;hint="先將分子相加，再約分。";topic="分數四則運算";}
+   if(t===1){ans=fraction(x*y,k*z);prompt=x+"/"+k+" × "+y+"/"+z+" = ?（最簡分數）";why="分子 "+x+"×"+y+"，分母 "+k+"×"+z+"，約分後為 "+ans;hint="先約分會比較容易。";topic="分數乘法";}
+   if(t===2){ans=fraction(x*k-y*z,k*z);prompt=x+"/"+z+" - "+y+"/"+k+" = ?（最簡分數）";why="通分後分子為 "+(x*k)+" - "+(y*z)+"，約分得 "+ans;hint="先求兩分母的共同倍數。";topic="異分母分數減法";}
+   if(t===3){ans=gcd(a,b);prompt="將 "+a+" 顆糖和 "+b+" 塊餅乾平均分成最多份完全相同、且沒有剩餘的禮物包，可分幾包？";why="最多份數等於 "+a+" 與 "+b+" 的最大公因數 "+ans;hint="這是最大公因數的生活應用。";topic="公因數應用";}
+  }else{
+   if(t===0){ans=fraction((x+y)*z,k*y);prompt="("+x+"/"+k+" + "+y+"/"+k+") × "+z+"/"+y+" = ?（最簡分數）";why="先同分母相加，得到 "+(x+y)+"/"+k+"，再乘以 "+z+"/"+y+"，結果為 "+ans;hint="先處理括號內，再做分數乘法。";topic="段考分數綜合";}
+   if(t===1){ans=fraction(x*k*z-y*k*k,k*z*k);prompt=x+"/"+k+" - "+y+"/"+z+" × "+k+"/"+k+" = ?（最簡分數）";ans=fraction(x*z-y*k,k*z);why="先算乘法 "+y+"/"+z+" × 1，再通分，得 "+ans;hint="先乘除後加減，並觀察是否能約分。";topic="段考分數綜合";}
+   if(t===2){ans=l;prompt="甲班每 "+a+" 天、乙班每 "+b+" 天舉辦活動，今天同時舉辦，至少再過幾天會同一天舉辦？";why="求 "+a+" 和 "+b+" 的最小公倍數，得到 "+l+" 天。";hint="找兩個周期共同出現的最短天數。";topic="公倍數生活題";}
+   if(t===3){ans=fraction(x*z+y*k,k*z);prompt=x+"/"+k+" + "+y+"/"+z+" = ?（最簡分數）";why="通分得到 ("+(x*z)+"+"+(y*k)+")/"+(k*z)+"，約分為 "+ans;hint="分母不同，要先通分。";topic="段考分數綜合";}
+  }
  }else if(ch===2){
-  const x=rand(-9,12),co=rand(2,6),offset=rand(-12,12);
-  if(type===0){ans=x;prompt=co+"x "+(offset>=0?"+ "+offset:"- "+Math.abs(offset))+" = "+(co*x+offset)+"，x = ?";why="移項後 "+co+"x = "+(co*x)+"，所以 x = "+x;hint="先把常數移到等號另一邊。";topic="一元一次方程式";}
-  if(type===1){ans=x;prompt=co+"(x "+(offset>=0?"+ "+offset:"- "+Math.abs(offset))+") = "+(co*(x+offset))+"，x = ?";why="兩邊除以 "+co+"，再移項得到 x = "+x;hint="先消去括號外的倍數。";topic="括號方程式";}
-  if(type===2){const y=rand(1,8);ans=x;prompt=co+"x + "+y+" = "+(co-1)+"x + "+(x+y)+"，x = ?";why="兩邊移項整理：x = "+x;hint="把含 x 的項集中在同一側。";topic="方程式移項";}
-  if(type===3){ans=x;prompt="某數的 "+co+" 倍再加上 "+Math.abs(offset)+" 等於 "+(co*x+Math.abs(offset))+"，這個數是？";why="設未知數為 x，移項得到 "+co+"x = "+(co*x)+"，所以 x = "+x;hint="先把題意列成等式。";topic="文字應用題";}
+  const sol=n,coef=k,off=m;
+  if(d===0){
+   ans=sol;prompt=coef+"x "+signed(off)+" = "+(coef*sol+off)+"，x = ?";why="移項後 "+coef+"x = "+(coef*sol)+"，所以 x = "+sol;hint="先將常數移到另一邊。";topic="解一元一次方程式";
+  }else if(d===1){
+   if(t<2){ans=sol;prompt=coef+"(x "+signed(off)+") = "+(coef*(sol+off))+"，x = ?";why="先除以 "+coef+"，得到 x "+signed(off)+" = "+(sol+off)+"，所以 x = "+sol;hint="先移除括號外的倍數。";topic="括號方程式";}
+   else{ans=sol;prompt=coef+"x "+signed(off)+" = "+(coef-1)+"x "+signed(sol+off)+"，x = ?";why="兩邊消去 "+(coef-1)+"x，整理後 x = "+sol;hint="把含 x 的項集中在等式一側。";topic="移項與合併同類項";}
+  }else{
+   if(t<2){const price=R(8,35),qty=R(3,9),fee=R(10,60);ans=qty;prompt="每件商品 "+price+" 元，另收運費 "+fee+" 元。結帳總價 "+(price*qty+fee)+" 元，共買幾件？";why="設購買 x 件，"+price+"x + "+fee+" = "+(price*qty+fee)+"，解得 x = "+qty;hint="先將總價表示成『單價×數量＋運費』。";topic="一元一次應用題";}
+   else{const age=R(11,18),gap=R(3,12);ans=age;prompt="哥哥比弟弟大 "+gap+" 歲，兩人年齡和為 "+(2*age+gap)+" 歲，弟弟幾歲？";why="設弟弟 x 歲，x + (x+"+gap+") = "+(2*age+gap)+"，得到 x = "+age;hint="設較小的年齡為未知數。";topic="年齡應用題";}
+  }
+ }else if(ch===3){
+  const sx=R(-6,12),sy=R(-6,12),a=R(2,6),b=R(2,6);
+  if(d===0){
+   if(t<2){ans=a*sx+b*sy;prompt="若 x = "+sx+"、y = "+sy+"，"+a+"x + "+b+"y = ?";why=a+"×("+sx+") + "+b+"×("+sy+") = "+ans;hint="將 x、y 分別代入。";topic="二元一次式代入";}
+   else{ans=sy;prompt="已知 "+a+"x + y = "+(a*sx+sy)+"，當 x = "+sx+" 時，y = ?";why="代入後 "+(a*sx)+" + y = "+(a*sx+sy)+"，因此 y = "+sy;hint="將已知 x 值代回原方程式。";topic="二元一次方程式";}
+  }else if(d===1){
+   ans=sx;prompt="聯立：x + y = "+(sx+sy)+"；"+a+"x + y = "+(a*sx+sy)+"。求 x。";why="兩式相減，得到 "+(a-1)+"x = "+((a-1)*sx)+"，所以 x = "+sx;hint="使用加減消去法，先消去 y。";topic="聯立方程式消去法";
+  }else{
+   if(t<2){const p=R(15,45),q=R(7,14),adult=R(4,12),child=R(3,9);ans=adult;prompt="某場活動成人票 "+p+" 元、學生票 "+q+" 元，共售出 "+(adult+child)+" 張，總收入 "+(p*adult+q*child)+" 元。成人票售出幾張？";why="設成人票 x、學生票 y：x+y="+(adult+child)+"，"+p+"x+"+q+"y="+(p*adult+q*child)+"，解得 x="+adult;hint="利用票數和金額列出二元一次聯立方程式。";topic="票價應用題";}
+   else{ans=sy;prompt="已知 2x + 3y = "+(2*sx+3*sy)+"，5x + 3y = "+(5*sx+3*sy)+"。求 y。";why="兩式相減得到 3x="+(3*sx)+"，x="+sx+"；代回得到 y="+sy;hint="先用消去法求一個未知數。";topic="聯立方程式綜合";}
+  }
+ }else if(ch===4){
+  const xx=R(-9,9),yy=R(-9,9),slope=R(2,6),intercept=R(-9,9);
+  if(d===0){
+   if(t<2){ans=xx>0?(yy>0?1:yy<0?4:0):(xx<0?(yy>0?2:yy<0?3:0):0);prompt="點 P("+xx+","+yy+") 位於第幾象限？若在坐標軸上則選 0。";why="根據 x、y 的正負號判斷象限，答案是 "+ans;hint="第一象限兩坐標皆正，依逆時針方向編號。";topic="直角坐標平面";}
+   else{ans=yy;prompt="點 A("+xx+","+yy+") 的 y 坐標是多少？";why="有序數對的第二個數是 y 坐標："+yy;hint="點的坐標順序為 (x,y)。";topic="直角坐標平面";}
+  }else if(d===1){
+   ans=slope*xx+intercept;prompt="直線 y = "+slope+"x "+signed(intercept)+"，當 x = "+xx+" 時，y = ?";why=slope+"×("+xx+") "+signed(intercept)+" = "+ans;hint="把 x 代入直線方程式。";topic="二元一次方程式圖形";
+  }else{
+   if(t<2){ans=intercept;prompt="直線 "+slope+"x - y = "+(-intercept)+"，與 y 軸的交點 y 坐標是多少？";why="令 x=0，得到 -y="+(-intercept)+"，所以 y="+intercept;hint="與 y 軸相交的位置，其 x 坐標為 0。";topic="截距應用";}
+   else{ans=slope;prompt="一條直線通過 (0,"+intercept+") 與 (2,"+(intercept+2*slope)+")，每當 x 增加 1，y 增加多少？";why="y 的變化量為 "+(2*slope)+"，x 變化 2，所以每 1 單位增加 "+slope;hint="比較兩個點的 x 與 y 變化量。";topic="直線與坐標推理";}
+  }
+ }else if(ch===5){
+  if(d===0){
+   ans=x*k;prompt="若 a:b = "+x+":"+y+"，且 b = "+(y*k)+"，則 a = ?";why="倍數為 "+k+"，所以 a="+x+"×"+k+"="+ans;hint="先確認 b 是比值中的幾倍。";topic="比例式";
+  }else if(d===1){
+   if(t<2){ans=x*k;prompt="y 與 x 成正比，x="+y+" 時 y="+(y*k)+"；當 x="+x+" 時，y = ?";why="比例常數為 "+k+"，因此 y="+k+"×"+x+"="+ans;hint="正比關係中 y/x 固定。";topic="正比";}
+   else{ans=x*y;prompt="y 與 x 成反比，x="+k+" 時 y="+(x*y)+"；當 x="+(k)+" 時，x×y = ?";why="反比關係中乘積保持不變，因此為 "+(k*(x*y));ans=k*x*y;hint="反比關係中兩變數的乘積不變。";topic="反比";}
+  }else{
+   if(t<2){const item=R(3,9),price=R(6,20),need=R(10,25);ans=price*need/item;custom=null;prompt=item+" 件商品售價 "+price+" 元，若單價不變，購買 "+need+" 件需多少元？（答案可以是小數）";why="每件 "+price+"/"+item+" 元，買 "+need+" 件共 "+ans+" 元。";hint="這是正比；先找每件的價格。";topic="正比應用";}
+   else{const workers=R(3,8),days=R(4,10),newWorkers=R(2,9);ans=fraction(workers*days,newWorkers);prompt=workers+" 人完成工作要 "+days+" 天，效率相同且工作量固定，改由 "+newWorkers+" 人完成，需幾天？（最簡分數）";why="人數×天數固定，得到 "+workers+"×"+days+"/"+newWorkers+" = "+ans+" 天。";hint="人數與天數成反比。";topic="反比應用";}
+  }
+ }else if(ch===6){
+  const bound=R(-9,15),coef=R(2,7);
+  if(d===0){
+   ans=bound+1;prompt="x > "+bound+"，最小整數解為多少？";why="大於 "+bound+" 的最小整數是 "+ans;hint="嚴格大於不包含邊界值。";topic="不等式的整數解";
+  }else if(d===1){
+   ans=bound;prompt=coef+"x "+signed(m)+" ≥ "+(coef*bound+m)+"，求 x 的最小整數解。";why=coef+"x ≥ "+(coef*bound)+"，所以 x ≥ "+bound+"，最小整數解是 "+bound;hint="移項後除以正數，不等號方向不變。";topic="解一元一次不等式";
+  }else{
+   if(t<2){ans=bound+1;prompt="-"+coef+"x < "+(-coef*bound)+"，求最小整數解。";why="兩邊除以 -"+coef+"，不等號反向：x > "+bound+"，因此最小整數解為 "+(bound+1);hint="不等式除以負數時，記得改變不等號方向。";topic="不等式與負數";}
+   else{const fee=R(10,60),unit=R(12,35),budget=R(130,250);ans=Math.floor((budget-fee)/unit);prompt="入場費 "+fee+" 元，每次遊戲另付 "+unit+" 元，預算不超過 "+budget+" 元，最多可玩幾次？";why="設次數 x，"+fee+"+"+unit+"x ≤ "+budget+"，所以 x ≤ "+((budget-fee)/unit)+"，最多 "+ans+" 次。";hint="先列出總費用不超過預算的不等式。";topic="生活不等式應用";}
+  }
+ }else if(ch===7){
+  const list=[R(3,15),R(3,15),R(3,15),R(3,15),R(3,15)].sort((a,b)=>a-b),sum=list.reduce((a,b)=>a+b,0);
+  if(d===0){
+   ans=list[2];prompt="資料 "+list.join("、")+" 的中位數是多少？";why="排序後位於正中央的第三個數是 "+ans;hint="先由小到大排序。";topic="中位數";
+  }else if(d===1){
+   if(t<2){ans=sum/5;prompt="五筆成績 "+list.join("、")+"，平均數為多少？";why="總和 "+sum+"，除以 5 得 "+ans;hint="平均數等於總和除以筆數。";topic="平均數";}
+   else{const a=R(4,12),b=R(1,9);ans=R(0,0)+a+b;prompt="甲班男生 "+a+" 人、女生 "+b+" 人，合計共有多少人？";why=a+"+"+b+"="+ans;hint="從列聯表兩類人數加總。";topic="列聯表";}
+  }else{
+   if(t<2){const avg=R(60,90),scores=[R(50,100),R(50,100),R(50,100),R(50,100)];ans=5*avg-scores.reduce((a,b)=>a+b,0);prompt="5 次考試平均 "+avg+" 分，其中 4 次分數是 "+scores.join("、")+"，第 5 次分數應為多少？（純代數計算）";why="總分應為 "+(5*avg)+"，扣除前四次 "+scores.reduce((a,b)=>a+b,0)+"，得到 "+ans;hint="平均數×筆數等於總和。";topic="平均數反推";}
+   else{const a=R(3,9),b=R(3,9),c=R(3,9);ans=b;prompt="某統計表數值為 "+a+"、"+b+"、"+b+"、"+c+"、"+b+"，眾數是多少？";why=b+" 出現 3 次，因此是眾數。";hint="眾數是出現頻率最高的值。";topic="眾數";}
+  }
  }else{
-  if(type===0){const x=rand(2,20),y=rand(2,20);ans=2*(x+y);prompt="長方形長 "+x+"、寬 "+y+"，周長是多少？";why="周長 = 2 × ("+x+" + "+y+") = "+ans;hint="周長要把四條邊全部相加。";topic="平面圖形";}
-  if(type===1){const x=rand(2,15),y=rand(2,15);ans=x*y;prompt="長方形長 "+x+"、寬 "+y+"，面積是多少？";why="面積 = "+x+" × "+y+" = "+ans;hint="想一想長方形面積的計算方式。";topic="面積";}
-  if(type===2){const x=rand(20,75),y=rand(20,80);ans=180-x-y;prompt="三角形兩個內角為 "+x+"° 和 "+y+"°，第三角為幾度？";why="三角形內角和為 180°，所以 180 - "+x+" - "+y+" = "+ans+"°。";hint="三角形三個內角的總和固定。";topic="三角形內角";}
-  if(type===3){const x=rand(15,145);ans=180-x;prompt="兩角互為補角，其中一角是 "+x+"°，另一角為幾度？";why="補角和為 180°，所以 180 - "+x+" = "+ans+"°。";hint="想一想補角的角度總和。";topic="角度";}
+  if(d===0){
+   ans=R(2,8);prompt="一個正方體有 6 個面。若有 "+ans+" 個互不重疊的正方體，全部共有多少個面？";why=ans+"×6="+(ans*6)+" 個面。";custom=[String(ans*6),String(ans*4),String(ans*5),String(ans*8)];ans=ans*6;hint="正方體共有 6 個平面。";topic="三視圖與立體圖形";
+  }else if(d===1){
+   if(t<2){ans=x;prompt="線對稱圖形上，點 P 與其對稱點 P' 到對稱軸距離相等。已知 P 到對稱軸距離 "+x+" 公分，P' 距離多少？";why="線對稱的對應點到對稱軸距離相等，所以為 "+ans+" 公分。";hint="利用線對稱的距離性質。";topic="線對稱";}
+   else{ans=x*2;prompt="一個長方形沿著穿過中心且平行短邊的對稱軸對折，原本長度為 "+(x*2)+" 公分，對折後長邊方向長度多少？";ans=x;why="沿中央對折，長邊方向長度減半，得到 "+x;hint="中央對折會讓對折方向的尺寸減半。";topic="幾何對稱";}
+  }else{
+   if(t<2){const x1=R(-8,8),y1=R(-8,8),axis=R(-4,4);ans=2*axis-x1;prompt="點 P("+x1+","+y1+") 對直線 x="+axis+" 作鏡射，對應點 P' 的 x 坐標為何？";why="x 坐標對稱後為 2×"+axis+" - ("+x1+") = "+ans;hint="對稱軸是原點與對稱點連線的中垂線。";topic="坐標與線對稱";}
+   else{const blocks=R(3,8);ans=blocks;prompt="積木由 "+blocks+" 個正方體沿同一直線排成一排，從正上方看可以看到幾個正方形？";why="每個正方體頂面各形成一格，因此可看到 "+ans+" 格。";hint="從上方觀察，只計算可見的頂面。";topic="三視圖";}
+  }
  }
- if(options){const pool=[...new Set(options.map(String))];let i=1;while(pool.length<4){const candidate=(Number.isFinite(Number(ans))?Number(ans)+i*3:i)+"";if(!pool.includes(candidate))pool.push(candidate);i++;}options=shuffle(pool).slice(0,4);if(!options.includes(String(ans)))options[0]=String(ans);}
- else {const delta=shuffle([-15,-9,-5,-3,3,5,8,12,17]);options=shuffle([ans,...delta.slice(0,3).map(v=>ans+v)]).map(String);}
- signature=ch+"|"+prompt;
- return {prompt,answer:String(ans),options,why,hint,topic,signature,difficulty:d,chapter:ch};
+ const answer=String(ans);
+ let options;
+ if(custom){options=shuffle(custom);}
+ else if(typeof ans==="number"&&Number.isFinite(ans)){
+   const offsets=shuffle([-15,-10,-7,-4,-2,2,3,5,8,12,20]);
+   options=shuffle([answer,...offsets.slice(0,3).map(v=>String(ans+v))]);
+ }else{
+   const parts=answer.split("/").map(Number),num=parts[0],den=parts[1];
+   const pool=[answer];
+   for(const alt of [fraction(num+1,den),fraction(num-1,den),fraction(num,den+1),fraction(num+2,den+1),String(num+1),String(num-1)]){
+    if(alt!==answer&&!pool.includes(alt))pool.push(alt);
+    if(pool.length===4)break;
+   }
+   options=shuffle(pool);
+ }
+ options=[...new Set(options)];
+ while(options.length<4)options.push("其他 "+options.length);
+ return {prompt,answer,options,why,hint,topic,signature:ch+"|"+prompt,difficulty:d,chapter:ch};
 }
 function newQuestion(){
  for(let i=0;i<30;i++){const q=generate(state.chapter,state.difficulty);if(!state.recent.includes(q.signature)){question=q;state.recent.push(q.signature);state.recent=state.recent.slice(-15);return;}}

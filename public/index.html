@@ -167,7 +167,7 @@ function generate(ch,d){
    if(t<2){ans=x*k;prompt="y 與 x 成正比，x="+y+" 時 y="+(y*k)+"；當 x="+x+" 時，y = ?";why="比例常數為 "+k+"，因此 y="+k+"×"+x+"="+ans;hint="正比關係中 y/x 固定。";topic="正比";}
    else{ans=x*y;prompt="y 與 x 成反比，x="+k+" 時 y="+(x*y)+"；當 x="+(k)+" 時，x×y = ?";why="反比關係中乘積保持不變，因此為 "+(k*(x*y));ans=k*x*y;hint="反比關係中兩變數的乘積不變。";topic="反比";}
   }else{
-   if(t<2){const item=R(3,9),price=R(6,20),need=R(10,25);ans=price*need/item;custom=null;prompt=item+" 件商品售價 "+price+" 元，若單價不變，購買 "+need+" 件需多少元？（答案可以是小數）";why="每件 "+price+"/"+item+" 元，買 "+need+" 件共 "+ans+" 元。";hint="這是正比；先找每件的價格。";topic="正比應用";}
+   if(t<2){const item=R(3,9),price=R(6,20),need=R(10,25);ans=fraction(price*need,item);custom=null;prompt=item+" 件商品售價 "+price+" 元，若單價不變，購買 "+need+" 件需多少元？（最簡分數）";why="每件 "+price+"/"+item+" 元，買 "+need+" 件共 "+ans+" 元。";hint="這是正比；先找每件的價格。";topic="正比應用";}
    else{const workers=R(3,8),days=R(4,10),newWorkers=R(2,9);ans=fraction(workers*days,newWorkers);prompt=workers+" 人完成工作要 "+days+" 天，效率相同且工作量固定，改由 "+newWorkers+" 人完成，需幾天？（最簡分數）";why="人數×天數固定，得到 "+workers+"×"+days+"/"+newWorkers+" = "+ans+" 天。";hint="人數與天數成反比。";topic="反比應用";}
   }
  }else if(ch===6){

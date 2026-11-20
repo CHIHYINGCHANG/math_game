@@ -1,93 +1,43 @@
-<!doctype html>
-<html lang="zh-Hant">
-<head>
+<!doctype html><html lang="zh-Hant"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#152d4c"><meta name="description" content="Math Quest 國七數學 RPG：隨機出題、闖關與錯題複習。">
-<title>Math Quest｜國七數學勇者</title>
+<meta name="theme-color" content="#f7f9fc"><title>Math Quest 4.0｜國七數學闖關島</title>
 <style>
-:root{font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;color:#23334a;background:#f0f5fc;font-synthesis:none}
-*{box-sizing:border-box}body{margin:0;min-height:100vh}button,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}
-.wrap{max-width:1100px;margin:auto;padding:22px 16px 60px}
-header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}
-.brand small{color:#426888;font-weight:800;letter-spacing:.16em}.brand h1{font-size:clamp(24px,5vw,36px);margin:3px 0}
-.tag{padding:8px 14px;background:#e5f2ff;border-radius:50px;color:#235b9c;font-weight:800;font-size:13px}
-.layout{display:grid;grid-template-columns:1fr 330px;gap:18px}
-.panel{background:#fff;border:1px solid #d9e6f3;border-radius:22px;box-shadow:0 8px 25px #183b6510;padding:20px;margin-bottom:16px}
-.battle{background:linear-gradient(155deg,#263f69,#14243c);color:white;overflow:hidden}
-.scene{min-height:165px;display:flex;align-items:center;justify-content:center;gap:35px;background:radial-gradient(ellipse at 50% 90%,#517c9b 0,#304e73 45%,transparent 80%);border-radius:18px;margin:12px 0 20px}
-.character{text-align:center;font-size:80px;filter:drop-shadow(0 10px 5px #06162785);transform-origin:center}
-.character:nth-child(2){animation:bob 2.8s ease-in-out infinite}.character span{display:block;font-size:13px;font-weight:800}
-@keyframes bob{50%{transform:translateY(-9px)}}.bars{display:grid;gap:12px}
-.barlabel{display:flex;justify-content:space-between;font-size:14px;font-weight:750;margin-bottom:5px}
-.track{background:#ffffff28;border-radius:30px;height:12px;overflow:hidden}.fill{height:100%;transition:width .3s;border-radius:30px}.red{background:#fb747c}.green{background:#4ed8a3}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:17px}.stat{background:#ffffff15;padding:10px;border-radius:11px;text-align:center}.stat strong{display:block;font-size:21px}.stat small{color:#c5dcf4}
-h2{font-size:19px;margin:0 0 13px}h3{margin:0 0 8px}.muted{color:#6a7b91}.eyebrow{color:#6e829b;font-size:13px;font-weight:700}
-.difficulties{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}
-.pill{background:#eef4fb;border:1px solid #d9e5f1;border-radius:999px;padding:9px 15px;font-weight:750;color:#435a78}
-.pill.active{background:#2463b2;color:white;border-color:#2463b2}.pill:disabled{opacity:.5}
-.question{font-size:clamp(22px,4vw,30px);font-weight:850;line-height:1.4;margin:14px 0 18px;overflow-wrap:anywhere}
-.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}.option{min-height:76px;border:2px solid #e1eaf4;border-radius:14px;background:#f9fbff;font-weight:800;font-size:20px;color:#24364e}
-.option:hover:not(:disabled){border-color:#8ab1e4;background:#eef6ff}.option.correct{background:#dff8e9;border-color:#32b67d}.option.incorrect{background:#ffe9e9;border-color:#f26b73}
-.option small{display:block;color:#71869e;font-size:11px}
-.btn{padding:12px 17px;border:0;border-radius:13px;background:#2463b2;color:white;font-weight:800}.btn.secondary{background:#e8f0f9;color:#34516d}.btn.good{background:#168b68}
-.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}.feedback{padding:14px;border-radius:13px;background:#edf5ff;margin-top:14px;line-height:1.65}.feedback.ok{background:#e6f9ee}.feedback.bad{background:#fff1ed}
-.chapters{display:grid;gap:10px}.chapter{text-align:left;background:#f5f8fe;border:2px solid #e1eaf5;border-radius:14px;padding:13px;color:#30455f}.chapter.selected{border-color:#3a80d5;background:#e9f3ff}
-.chapter strong{display:block;margin-bottom:3px}.chapter small{color:#68809c}.chapter:disabled{opacity:.55}
-.footertext{font-size:12px;color:#738399;line-height:1.65}.count{font-weight:800;color:#236bb8}
-.separator{height:1px;background:#e5edf6;margin:17px 0}.hidden{display:none!important}
-@media(max-width:760px){.layout{grid-template-columns:1fr}.wrap{padding:16px 12px 40px}.panel{padding:16px}.scene{min-height:130px}.character{font-size:60px}.choices{gap:8px}.option{min-height:67px}}
-@media(prefers-reduced-motion:reduce){.character:nth-child(2){animation:none}}
-</style>
-</head>
-<body>
-<div class="wrap">
-<header><div class="brand"><small>MATH QUEST · GRADE 7 · FULL YEAR</small><h1>⚔️ 數學勇者傳說</h1><div class="muted">國七全年 RPG｜段考進階隨機題庫</div></div><div class="tag" id="levelBadge">LV 1</div></header>
-<div class="layout">
-<main>
-<section class="panel battle" aria-label="戰鬥狀態">
-<div class="eyebrow" style="color:#bbd2f0" id="battleTitle">第一區域 · 數與數線</div>
-<div class="scene"><div class="character" aria-label="勇者">🧙‍♂️<span>數學勇者</span></div><div class="character" aria-label="怪物" id="enemyArt">👾<span>森林史萊姆</span></div></div>
-<div class="bars"><div><div class="barlabel"><span id="enemyName">森林史萊姆</span><span id="enemyText">150 / 150 HP</span></div><div class="track"><div class="fill red" id="enemyBar" style="width:100%"></div></div></div><div><div class="barlabel"><span>勇者生命</span><span id="heroText">100 / 100 HP</span></div><div class="track"><div class="fill green" id="heroBar" style="width:100%"></div></div></div></div>
-<div class="stats"><div class="stat">⚡ <strong id="xpNum">0</strong><small>經驗值</small></div><div class="stat">🔥 <strong id="comboNum">0</strong><small>連擊</small></div><div class="stat">🏆 <strong id="winsNum">0</strong><small>擊敗怪物</small></div></div>
-</section>
-<section class="panel" id="playPanel">
-<div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><h2 id="questionTitle">數學攻擊</h2><span class="eyebrow" id="roundText">第 1 回合</span></div>
-<div class="difficulties" id="difficulties"><button class="pill active" data-diff="0">基礎 · 20 傷害</button><button class="pill" data-diff="1">進階 · 30 傷害</button><button class="pill" data-diff="2">挑戰 · 45 傷害</button></div>
-<div class="eyebrow" id="topicText">整數加減</div><div class="question" id="questionText"></div>
-<div class="choices" id="options"></div>
-<div class="actions"><button class="btn secondary" id="hintBtn">💡 查看提示</button><button class="btn secondary" id="reviewBtn">📖 錯題復仇（0）</button></div>
-<div id="hintBox" class="feedback hidden"></div><div id="feedbackBox" class="feedback hidden" aria-live="polite"></div>
-<div class="actions"><button class="btn hidden" id="nextBtn">下一題 ➜</button><button class="btn good hidden" id="continueBtn">繼續冒險 ➜</button></div>
-</section>
-</main>
-<aside>
-<section class="panel"><h2>🗺️ 冒險地圖</h2><div class="chapters" id="chapters"></div><div class="separator"></div><div class="footertext">每一區依知識點出題；題目涵蓋七上、七下九個單元，數值與選項會隨機變化，並避免連續出現相同題目。</div></section>
-<section class="panel"><h2>📈 學習成果</h2><p>已回答：<span class="count" id="attemptsNum">0</span> 題</p><p>正確率：<span class="count" id="accuracyNum">0%</span></p><p>錯題本：<span class="count" id="mistakeNum">0</span> 題</p><p>本機保存：<span class="count">已啟用</span></p><div class="separator"></div><button class="btn secondary" id="resetBtn">重設遊戲進度</button></section>
-<section class="panel footertext">此平台提供國七程度的原創數學練習，不包含任何翰林課本原題。七上章節名稱與順序應依學生實際使用的版本核對。所有資料僅儲存在此瀏覽器，不會同步到其他裝置。</section>
-</aside>
-</div></div>
+:root{font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;color:#263448;background:#f3f7fc}*{box-sizing:border-box}body{margin:0}button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.52}
+.wrap{max-width:1170px;margin:0 auto;padding:22px 16px 48px}header{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:12px 0 22px}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.09em;color:#66829f}h1{font-size:clamp(25px,4.5vw,36px);margin:5px 0}h2{line-height:1.4}
+.caption{font-size:13px;color:#6d7d91;margin:4px 0}.badge{background:#e2f3e9;color:#217d57;padding:9px 13px;border-radius:20px;font-size:13px;font-weight:800}
+.layout{display:grid;grid-template-columns:270px minmax(0,1fr) 235px;gap:16px}
+.panel{background:white;border:1px solid #dfebf5;border-radius:20px;padding:18px;box-shadow:0 9px 25px #2644660d;margin-bottom:15px}.panel h2{font-size:18px;margin:0 0 15px}
+.chapter{display:flex;width:100%;align-items:center;text-align:left;gap:9px;background:#f8fafd;border:1px solid #e6edf5;border-radius:12px;padding:11px;margin-bottom:8px;color:#34445b}
+.chapter span{font-size:24px}.chapter strong{display:block;font-size:13px;line-height:1.35}.chapter small{display:block;color:#7e8ea0;margin-top:3px}.chapter.on{background:#e8f3ff;border-color:#68a6ed}
+.hero{background:linear-gradient(115deg,#e8f7f0,#e8f3ff);border:1px solid #d6e9e9;border-radius:18px;padding:20px;margin-bottom:16px}.hero h2{font-size:21px;margin:5px 0}.hero p{font-size:13px;color:#617487}
+.levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:16px}.level{min-height:132px;background:#fff;border:2px solid #e0eaf5;border-radius:17px;color:#30425b;text-align:left;padding:13px;display:flex;flex-direction:column;gap:6px}
+.level:hover:not(:disabled){border-color:#65a5ee;transform:translateY(-1px)}.level.on{border-color:#24a27b;background:#effcf7}.level.locked{background:#f1f3f6}.level strong{font-size:13px}.level small{font-size:11px;color:#6b8298}.lvl-emoji{font-size:28px}.stars{font-size:18px;color:#e4a32e;letter-spacing:2px;margin-top:auto}
+.task-top{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:#5d738c}.step-track{display:flex;gap:5px;margin:13px 0 20px}.step-track span{flex:1;height:7px;background:#e4eaf1;border-radius:20px}.step-track span.filled{background:#26b48f}
+.topic{font-size:12px;color:#397ba8;font-weight:750}.question{font-size:clamp(20px,3vw,27px);margin:10px 0 22px;line-height:1.5}
+.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.answer{border:2px solid #dae7f5;background:#f8fbff;border-radius:13px;padding:18px;min-height:65px;font-size:21px;font-weight:800;color:#30405a}
+.answer small{display:block;font-size:11px;color:#70859e}.answer:hover:not(:disabled){border-color:#4d9ce6}.answer.right,.tick.right{background:#dbf7e9;border-color:#21b77b}.answer.wrong,.tick.wrong{background:#ffe6e6;border-color:#ed6a7c}
+.action-row{display:flex;flex-wrap:wrap;gap:9px;margin:18px 0 0}button.primary,button.secondary{border:0;border-radius:12px;padding:12px 16px;font-weight:800}button.primary{background:#2173bf;color:white}button.secondary{background:#edf3fa;color:#42617f}.full{width:100%;margin-top:13px}
+.feedback{padding:13px 15px;border-radius:12px;background:#eaf3ff;margin-top:14px;line-height:1.65}.feedback.success{background:#e6f7ed}.feedback.error{background:#fff0ee}.feedback p{margin:7px 0 0}
+.empty{text-align:center;padding:37px 10px}.empty h2{font-size:23px}.empty p{color:#677e97}.big-icon{font-size:67px}.huge-stars{font-size:44px;color:#e8aa2a;letter-spacing:5px}
+.line-grid{display:flex;overflow-x:auto;scrollbar-width:thin;padding:18px 2px 25px;gap:0}.tick{min-width:32px;flex:1;padding:6px 0;background:#f3f8ff;border:1px solid #c6d9ee;color:#395572;display:flex;align-items:center;flex-direction:column;gap:13px}.tick b{font-size:12px}.tick small{font-size:10px}
+.input-line{display:flex;gap:8px}.input-line input{width:100%;min-width:0;border:2px solid #cbdcef;border-radius:12px;padding:12px 15px;font-size:20px}
+.sort-result{border:1px dashed #95b3d7;background:#f0f6ff;border-radius:12px;min-height:60px;padding:18px;margin:13px 0;font-size:19px;text-align:center;font-weight:700}
+.micro{font-size:13px;color:#6f8198}.metric{font-size:29px;font-weight:850;margin:5px 0 20px}.metric small{display:block;font-size:12px;color:#758ba3;font-weight:500}.foot{font-size:12px;color:#7d91a5;line-height:1.7}.reset{width:100%}
+@media(max-width:1060px){.layout{grid-template-columns:220px minmax(0,1fr)}.layout aside{grid-column:1/-1}.asidePanel{display:inline-block;vertical-align:top;width:49%;margin-right:1%}}
+@media(max-width:720px){.layout{display:block}.wrap{padding:12px}.panel{padding:15px}.levels{grid-template-columns:repeat(2,minmax(0,1fr))}.chapterList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.chapter{margin:0}.hero{padding:14px}.line-grid .tick{min-width:31px}.asidePanel{display:block;width:100%}}
+</style></head><body>
+<div class="wrap"><header><div><div class="eyebrow">MATH QUEST · VERSION 4.0</div><h1>🏝️ 國七數學闖關島</h1><p class="caption">解謎、尋寶、挑戰｜七年級全年原創題庫</p></div><div class="badge">⭐ <span id="totalStars">0</span> 星</div></header>
+<div class="layout"><nav class="panel"><h2>📚 章節選擇</h2><div class="chapterList" id="chapterSelect"></div></nav>
+<main><div class="hero"><div class="eyebrow">目前冒險區域</div><h2 id="chapterHeading"></h2><p>每章六關 · 過關解鎖下一關 · 最多十八顆星</p></div>
+<div class="levels" id="levelMap"></div><section class="panel" id="gameBoard"></section></main>
+<aside><section class="panel asidePanel"><h2>🏅 學習進度</h2><div class="metric" id="progressText"></div><div class="metric" id="accuracy"></div><p class="micro">答題正確率</p><div class="metric" id="mistakeCount"></div><p class="micro">錯題紀錄數</p></section>
+<section class="panel asidePanel"><h2>💾 儲存與版本</h2><p class="foot">進度保存在這台裝置的瀏覽器。舊版 RPG 已備份到 GitHub 的 archive/rpg-v3.html。</p><button class="secondary reset" id="reset">清除 v4 進度</button><p class="foot">國七課程架構為原創練習安排，尚須依實際翰林教科書的年度及小節逐一核對。部分圖形題目前先以文字題實作。</p></section></aside></div></div>
 <script>
-"use strict";
-const CHAPTERS=[
- {name:"七上① 數與數線",icon:"🌲",enemy:"整數史萊姆",emoji:"👾",hp:180},
- {name:"七上② 標準分解式與分數運算",icon:"⛰️",enemy:"質因數巨人",emoji:"🗿",hp:200},
- {name:"七上③ 一元一次方程式",icon:"🏰",enemy:"代數守衛",emoji:"🤖",hp:220},
- {name:"七下① 二元一次聯立方程式",icon:"⚔️",enemy:"雙生魔像",emoji:"👹",hp:240},
- {name:"七下② 直角坐標與方程式圖形",icon:"🧭",enemy:"座標幻影",emoji:"👻",hp:260},
- {name:"七下③ 比例",icon:"⚖️",enemy:"比例鍊金師",emoji:"🧟",hp:280},
- {name:"七下④ 一元一次不等式",icon:"🔥",enemy:"不等式魔獸",emoji:"😈",hp:300},
- {name:"七下⑤ 統計圖表與統計數據",icon:"📊",enemy:"數據守衛",emoji:"🦾",hp:320},
- {name:"七下⑥ 線對稱與三視圖",icon:"🐉",enemy:"幾何魔龍",emoji:"🐲",hp:350}
-];
-const KEY="math-quest-v3";
-const initial=()=>({chapter:0,unlocked:0,difficulty:0,hp:100,enemyHp:180,xp:0,combo:0,wins:0,attempts:0,correct:0,mistakes:[],recent:[],round:1});
-let state=initial();
-try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved&&Number.isInteger(saved.chapter)&&saved.chapter>=0&&saved.chapter<CHAPTERS.length){state={...initial(),...saved};state.unlocked=Math.max(0,Math.min(CHAPTERS.length-1,state.unlocked));state.difficulty=Math.max(0,Math.min(2,state.difficulty));state.mistakes=Array.isArray(state.mistakes)?state.mistakes:[];state.recent=Array.isArray(state.recent)?state.recent:[];}}catch(e){}
-let question=null,selected=null,mode="battle",reviewIndex=0,showHint=false,phase="question";
-const $=id=>document.getElementById(id),rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
-function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=rand(0,i);[b[i],b[j]]=[b[j],b[i]];}return b;}
+const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+function shuffle(items){const a=[...items];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;}
 function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a;}
-function fraction(n,d){const g=gcd(n,d);return (n/g)+"/"+(d/g);}
+function fraction(a,b){if(b<0){a=-a;b=-b;}const g=gcd(a,b);return b/g===1?String(a/g):a/g+"/"+b/g;}
 function generate(ch,d){
  const R=rand, x=R(3,12),y=R(2,9),z=R(1,8),k=R(2,6),n=R(-14,14),m=R(-10,10), t=R(0,3);
  let prompt="",ans=0,why="",hint="",topic="",custom=null;
@@ -221,96 +171,117 @@ function generate(ch,d){
  while(options.length<4)options.push("其他 "+options.length);
  return {prompt,answer,options,why,hint,topic,signature:ch+"|"+prompt,difficulty:d,chapter:ch};
 }
-function newQuestion(){
- for(let i=0;i<30;i++){const q=generate(state.chapter,state.difficulty);if(!state.recent.includes(q.signature)){question=q;state.recent.push(q.signature);state.recent=state.recent.slice(-15);return;}}
- question=generate(state.chapter,state.difficulty);
+
+const CHAPTERS=[
+["數與數線","🧭"],["標準分解式與分數運算","🔢"],["一元一次方程式","⚖️"],
+["二元一次聯立方程式","🗝️"],["直角坐標與方程式圖形","📍"],["比例","🧪"],
+["一元一次不等式","🚦"],["統計圖表與統計數據","📊"],["線對稱與三視圖","🪞"]
+];
+const LEVELS=[
+["數線尋寶","數線定位","line","🎯"],["數字排序","從小到大排序","sort","🧩"],
+["密碼寶箱","解開三位密碼","code","🔐"],["等式天平","找出缺少的數","balance","⚖️"],
+["冰原迷宮","連續解開四個機關","maze","🧭"],["章節大挑戰","五題混合考驗","boss","🏆"]
+];
+const STORE="math-quest-puzzle-v4";
+const $=id=>document.getElementById(id);
+const fresh=()=>({chapter:0,unlockedChapter:0,stars:{},levelUnlock:{},attempts:0,correct:0,errors:[],bestCombo:0});
+let state=fresh();
+try{const raw=JSON.parse(localStorage.getItem(STORE));if(raw&&typeof raw==="object"){state={...fresh(),...raw};state.stars=state.stars||{};state.levelUnlock=state.levelUnlock||{};state.errors=Array.isArray(state.errors)?state.errors:[];}}catch(e){}
+let currentLevel=null,questions=[],index=0,selected=null,mistakes=0,hints=0,finished=false,combo=0,sortPicks=[],notice="",showHint=false,answerFeedback="",reviewMode=false;
+function persist(){try{localStorage.setItem(STORE,JSON.stringify(state));}catch(e){}}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function chapterKey(ch,lv){return ch+"-"+lv;}
+function chapterUnlock(ch){return state.levelUnlock[ch]||0;}
+function makeLine(){const target=rand(-8,8);return {kind:"line",title:"請在數線上找到 "+target,answer:String(target),hint:"0 的右邊是正數，左邊是負數。",why:"目標位置是 "+target+"。",topic:"正負數數線"};}
+function makeSort(){const values=new Set();while(values.size<4)values.add(rand(-12,12));const sorted=[...values].sort((a,b)=>a-b);return {kind:"sort",title:"請依照從小到大排序",values:shuffle(sorted),answer:sorted.join(","),hint:"越靠數線左側的數越小，負數要特別小心。",why:"正確順序："+sorted.join(" < "),topic:"正負數比較"};}
+function makeBalance(){const x=rand(-12,12),a=rand(-9,9),sum=x+a;return {kind:"input",title:"天平兩邊要相等：□ "+(a>=0?"+ "+a:"- "+Math.abs(a))+" = "+sum+"，□ = ?",answer:String(x),hint:"想想等式兩邊應該怎麼同時移動數字。",why:"□ = "+sum+" - ("+a+") = "+x,topic:"等式與整數運算"};}
+function makeMath(ch,d){const q=generate(ch,d);return {kind:"choice",title:q.prompt,answer:q.answer,options:q.options.map(String),why:q.why,hint:q.hint,topic:q.topic};}
+function makeQuestion(ch,lv,idx,exclude){
+ if(ch===0){
+  if(lv===0)return makeLine();
+  if(lv===1)return makeSort();
+  if(lv===3)return makeBalance();
+ }
+ const difficulty=lv<=1?0:lv<=3?1:2;
+ for(let i=0;i<30;i++){const q=makeMath(ch,difficulty);if(!exclude.includes(q.title))return q;}
+ return makeMath(ch,difficulty);
 }
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
-function render(){
- $("levelBadge").textContent="LV "+(Math.floor(state.xp/100)+1);
- $("enemyName").textContent=CHAPTERS[state.chapter].enemy;
- $("enemyText").textContent=state.enemyHp+" / "+CHAPTERS[state.chapter].hp+" HP";
- $("enemyBar").style.width=(100*state.enemyHp/CHAPTERS[state.chapter].hp)+"%";
- $("heroText").textContent=state.hp+" / 100 HP";$("heroBar").style.width=state.hp+"%";
- $("enemyArt").innerHTML=CHAPTERS[state.chapter].emoji+"<span>"+CHAPTERS[state.chapter].enemy+"</span>";
- $("battleTitle").textContent="第 "+(state.chapter+1)+" 區域 · "+CHAPTERS[state.chapter].name;
- $("xpNum").textContent=state.xp;$("comboNum").textContent=state.combo;$("winsNum").textContent=state.wins;
- $("attemptsNum").textContent=state.attempts;$("accuracyNum").textContent=state.attempts?Math.round(state.correct/state.attempts*100)+"%":"0%";
- $("mistakeNum").textContent=state.mistakes.length;
- $("chapters").innerHTML=CHAPTERS.map((c,i)=>'<button class="chapter '+(i===state.chapter?'selected':'')+'" data-chapter="'+i+'" '+(i>state.unlocked?'disabled':'')+'><strong>'+(i>state.unlocked?'🔒 ':c.icon+' ')+c.name+'</strong><small>'+(i>state.unlocked?'尚未解鎖':'怪物：'+c.enemy)+'</small></button>').join("");
- document.querySelectorAll("[data-chapter]").forEach(el=>el.onclick=()=>switchChapter(Number(el.dataset.chapter)));
- $("reviewBtn").textContent="📖 錯題復仇（"+state.mistakes.length+"）";
- $("reviewBtn").disabled=!state.mistakes.length||phase!=="question"&&phase!=="feedback";
- document.querySelectorAll("[data-diff]").forEach(el=>{el.classList.toggle("active",Number(el.dataset.diff)===state.difficulty);el.disabled=mode==="review"||selected!==null||phase==="win"||phase==="lose";});
- $("difficulties").classList.toggle("hidden",mode==="review"||phase==="win"||phase==="lose");
- $("roundText").textContent=mode==="review"?"錯題 "+(reviewIndex+1)+"/"+state.mistakes.length:"第 "+state.round+" 回合";
- $("nextBtn").classList.add("hidden");$("continueBtn").classList.add("hidden");
- $("hintBox").classList.toggle("hidden",!showHint);
- const q=mode==="review"?state.mistakes[reviewIndex]:question;
- if(phase==="win"||phase==="lose"){
-  $("topicText").textContent=phase==="win"?"戰鬥勝利":"戰鬥失敗";
-  $("questionText").textContent=phase==="win"?"🎉 打敗 "+CHAPTERS[state.chapter].enemy+"！":"💔 勇者倒下了，再挑戰一次吧！";
-  $("options").innerHTML="";$("hintBtn").classList.add("hidden");$("hintBox").classList.add("hidden");
-  $("feedbackBox").className="feedback";$("feedbackBox").textContent=phase==="win"?"本區域通關，獲得額外 50 XP。下一區域已解鎖。":"保留經驗值和錯題記錄，恢復生命後可以繼續挑戰。";
-  $("continueBtn").textContent=phase==="win"?"前往下一場戰鬥 ➜":"恢復生命重試";
-  $("continueBtn").classList.remove("hidden");
-  return;
- }
- $("hintBtn").classList.remove("hidden");$("hintBtn").textContent=showHint?"隱藏提示":"💡 查看提示";
- $("topicText").textContent=mode==="review"?"錯題復仇 · "+q.topic:q.topic+" · "+["基礎","進階","挑戰"][state.difficulty];
- $("questionText").textContent=q.prompt;
- $("options").innerHTML="";
- q.options.forEach((value,i)=>{
-  const btn=document.createElement("button");btn.className="option";
-  btn.innerHTML="<small>"+("ABCD"[i])+"</small>";
-  btn.appendChild(document.createTextNode(value));
-  if(selected!==null){btn.disabled=true;if(value===q.answer)btn.classList.add("correct");else if(value===selected)btn.classList.add("incorrect");}
-  btn.onclick=()=>choose(value);$("options").appendChild(btn);
- });
- $("hintBox").textContent=q.hint;
- const feedback=$("feedbackBox");feedback.className="feedback hidden";
- if(selected!==null){
-  feedback.className="feedback "+(selected===q.answer?"ok":"bad");
-  feedback.textContent=(selected===q.answer?"✅ 答對了！":"❌ 答錯了，正確答案是 "+q.answer+"。")+" "+q.why;
-  $("nextBtn").textContent=mode==="review"?"下一道錯題 ➜":"下一道隨機題 ➜";
-  $("nextBtn").classList.remove("hidden");
- }
-}
-function choose(value){
- if(selected!==null||phase!=="question")return;
- const q=mode==="review"?state.mistakes[reviewIndex]:question;
- selected=value;phase="feedback";
- if(mode==="battle"){
-  state.attempts++;
-  if(value===q.answer){state.correct++;const damage=[20,30,45][state.difficulty]+(state.combo>=2?15:0);state.enemyHp=Math.max(0,state.enemyHp-damage);state.xp+=[10,20,30][state.difficulty];state.combo++;}
-  else {state.hp=Math.max(0,state.hp-20);state.combo=0;if(!state.mistakes.some(t=>t.signature===q.signature))state.mistakes.push(q);}
-  save();
- }
+function totalSteps(lv){return [3,3,3,3,4,5][lv];}
+function startLevel(lv){
+ if(lv>chapterUnlock(state.chapter))return;
+ currentLevel=lv;index=0;mistakes=0;hints=0;combo=0;selected=null;finished=false;reviewMode=false;notice="";answerFeedback="";showHint=false;questions=[];
+ const used=[];for(let i=0;i<totalSteps(lv);i++){let q=makeQuestion(state.chapter,lv,i,used);questions.push(q);used.push(q.title);}
  render();
 }
-function goNext(){
- selected=null;showHint=false;
- if(mode==="review"){
-  reviewIndex++;if(reviewIndex>=state.mistakes.length){mode="battle";reviewIndex=0;newQuestion();}
-  phase="question";render();return;
+function chooseChapter(ch){
+ if(ch>state.unlockedChapter)return;
+ state.chapter=ch;currentLevel=null;finished=false;persist();render();
+}
+function verify(value){
+ if(selected!==null||finished)return;
+ const q=questions[index];const correct=String(value)===q.answer;
+ selected=String(value);state.attempts++;
+ if(correct){state.correct++;combo++;state.bestCombo=Math.max(state.bestCombo,combo);notice="✅ 答對了！"+(combo>=3?" 連續答對 "+combo+" 題！":"");}
+ else{mistakes++;combo=0;notice="❌ 還差一點。正確答案："+(q.kind==="sort"?q.why:q.answer);state.errors.push({chapter:state.chapter,level:currentLevel,question:q.title,answer:q.answer,why:q.why});state.errors=state.errors.slice(-120);}
+ answerFeedback=q.why;persist();render();
+}
+function advance(){
+ if(selected===null)return;
+ if(index+1<questions.length){index++;selected=null;notice="";answerFeedback="";showHint=false;sortPicks=[];render();}
+ else{finishLevel();}
+}
+function finishLevel(){
+ finished=true;
+ const stars=mistakes===0&&hints===0?3:mistakes<=1&&hints<=1?2:1;
+ const key=chapterKey(state.chapter,currentLevel);state.stars[key]=Math.max(stars,state.stars[key]||0);
+ if(currentLevel<5)state.levelUnlock[state.chapter]=Math.max(chapterUnlock(state.chapter),currentLevel+1);
+ if(currentLevel===5&&state.chapter<CHAPTERS.length-1)state.unlockedChapter=Math.max(state.unlockedChapter,state.chapter+1);
+ persist();render();
+}
+function numStars(ch,lv){return state.stars[chapterKey(ch,lv)]||0;}
+function renderMap(){
+ $("chapterSelect").innerHTML=CHAPTERS.map((c,i)=>'<button class="chapter '+(state.chapter===i?'on':'')+'" data-ch="'+i+'" '+(i>state.unlockedChapter?'disabled':'')+'><span>'+c[1]+'</span><div><strong>'+(i<3?'七上':'七下')+' · '+escapeHTML(c[0])+'</strong><small>'+(i>state.unlockedChapter?'🔒 尚未解鎖':"已獲得 "+[0,1,2,3,4,5].reduce((s,n)=>s+numStars(i,n),0)+" / 18 星")+'</small></div></button>').join("");
+ document.querySelectorAll("[data-ch]").forEach(b=>b.onclick=()=>chooseChapter(Number(b.dataset.ch)));
+ $("levelMap").innerHTML=LEVELS.map((x,i)=>'<button class="level '+(i>chapterUnlock(state.chapter)?'locked':'')+' '+(currentLevel===i?'on':'')+'" data-lv="'+i+'" '+(i>chapterUnlock(state.chapter)?'disabled':'')+'><span class="lvl-emoji">'+x[3]+'</span><strong>第 '+(i+1)+' 關 · '+x[0]+'</strong><small>'+x[1]+'</small><span class="stars">'+(numStars(state.chapter,i)?"★".repeat(numStars(state.chapter,i))+"☆".repeat(3-numStars(state.chapter,i)):(i>chapterUnlock(state.chapter)?"🔒":"○ ○ ○"))+'</span></button>').join("");
+ document.querySelectorAll("[data-lv]").forEach(b=>b.onclick=()=>startLevel(Number(b.dataset.lv)));
+ const stars=Object.values(state.stars).reduce((s,n)=>s+n,0);
+ $("totalStars").textContent=stars;
+ $("accuracy").textContent=state.attempts?Math.round(state.correct/state.attempts*100)+"%":"0%";
+ $("mistakeCount").textContent=state.errors.length;
+ $("progressText").textContent="已完成 "+Object.keys(state.stars).length+" / "+(CHAPTERS.length*6)+" 關";
+ $("chapterHeading").textContent=CHAPTERS[state.chapter][1]+" "+CHAPTERS[state.chapter][0];
+}
+function renderQuestion(){
+ const board=$("gameBoard");
+ if(currentLevel===null){board.innerHTML='<div class="empty"><div class="big-icon">🗺️</div><h2>選一個關卡，開始解謎！</h2><p>不再扣怪物血：每一關都有不同任務，答對才能前進。</p><button id="quickStart" class="primary">開始第 '+(chapterUnlock(state.chapter)+1)+' 關 →</button></div>';$("quickStart").onclick=()=>startLevel(chapterUnlock(state.chapter));return;}
+ if(finished){
+  const stars=numStars(state.chapter,currentLevel);
+  board.innerHTML='<div class="empty"><div class="big-icon">🎉</div><p class="eyebrow">關卡完成</p><h2>'+LEVELS[currentLevel][0]+' 過關！</h2><div class="huge-stars">'+"★".repeat(stars)+"☆".repeat(3-stars)+'</div><p>答錯 '+mistakes+' 次 · 使用提示 '+hints+' 次</p><div class="action-row"><button class="secondary" id="replay">重新挑戰</button><button class="primary" id="goNext">'+(currentLevel===5?'返回地圖':'下一關 →')+'</button></div></div>';
+  $("replay").onclick=()=>startLevel(currentLevel);$("goNext").onclick=()=>{if(currentLevel<5)startLevel(currentLevel+1);else{currentLevel=null;render();}};return;
  }
- if(state.enemyHp===0){phase="win";state.xp+=50;state.wins++;state.unlocked=Math.max(state.unlocked,Math.min(CHAPTERS.length-1,state.chapter+1));save();render();return;}
- if(state.hp===0){phase="lose";render();return;}
- state.round++;newQuestion();phase="question";save();render();
+ const q=questions[index];
+ let fragment="";
+ if(q.kind==="line"){
+  fragment='<div class="line-grid">'+Array.from({length:21},(_,i)=>{const n=i-10;return '<button class="tick '+(selected!==null&&String(n)===q.answer?'right':selected===String(n)?'wrong':'')+'" data-num="'+n+'" '+(selected!==null?'disabled':'')+'><b>●</b><small>'+n+'</small></button>';}).join("")+'</div>';
+ }else if(q.kind==="sort"){
+  fragment='<p class="micro">依序點選數字卡片，由小到大排出正確順序：</p><div class="choices">'+q.values.filter(v=>!sortPicks.includes(v)).map(v=>'<button class="answer" data-sort="'+v+'" '+(selected!==null?'disabled':'')+'>'+v+'</button>').join("")+'</div><div class="sort-result">'+(sortPicks.length?sortPicks.join("　→　"):"等待選擇第一個數字…")+'</div>'+(selected===null?'<button id="clearSort" class="secondary">重排</button>':'');
+ }else if(q.kind==="input"){
+  fragment='<form id="numberForm" class="input-line"><input aria-label="輸入答案" id="numberAnswer" type="number" step="any" placeholder="輸入數字" '+(selected!==null?'disabled':'required')+'><button type="submit" class="primary" '+(selected!==null?'disabled':'')+'>確認答案</button></form>';
+ }else{
+  fragment='<div class="choices">'+q.options.map((v,i)=>'<button class="answer '+(selected!==null&&String(v)===q.answer?'right':selected===String(v)?'wrong':'')+'" data-val="'+escapeHTML(v)+'" '+(selected!==null?'disabled':'')+'><small>'+("ABCD"[i])+'</small>'+escapeHTML(v)+'</button>').join("")+'</div>';
+ }
+ board.innerHTML='<div class="task-top"><span class="eyebrow">第 '+(currentLevel+1)+' 關 · '+LEVELS[currentLevel][0]+'</span><span>題目 '+(index+1)+' / '+questions.length+'</span></div><div class="step-track">'+questions.map((_,i)=>'<span class="'+(i<=index?'filled':'')+'"></span>').join("")+'</div><div class="topic">'+escapeHTML(q.topic)+'</div><h2 class="question">'+escapeHTML(q.title)+'</h2>'+fragment+'<div class="action-row"><button class="secondary" id="hint">💡 '+(showHint?'收起提示':'查看提示')+'</button><button class="secondary" id="exit">返回地圖</button></div>'+(showHint?'<div class="feedback">'+escapeHTML(q.hint)+'</div>':'')+(selected!==null?'<div class="feedback '+(selected===q.answer?'success':'error')+'"><strong>'+escapeHTML(notice)+'</strong><p>'+escapeHTML(answerFeedback)+'</p></div><button id="advance" class="primary full">'+(index+1===questions.length?'完成關卡':'繼續下一題 →')+'</button>':'');
+ board.querySelectorAll("[data-num]").forEach(b=>b.onclick=()=>verify(b.dataset.num));
+ board.querySelectorAll("[data-val]").forEach(b=>b.onclick=()=>verify(b.dataset.val));
+ board.querySelectorAll("[data-sort]").forEach(b=>b.onclick=()=>{sortPicks.push(Number(b.dataset.sort));if(sortPicks.length===q.values.length)verify(sortPicks.join(","));else renderQuestion();});
+ const clr=$("clearSort");if(clr)clr.onclick=()=>{sortPicks=[];renderQuestion();};
+ const form=$("numberForm");if(form)form.onsubmit=e=>{e.preventDefault();const input=$("numberAnswer").value;if(input!=="")verify(Number(input));};
+ $("hint").onclick=()=>{if(!showHint&&selected===null)hints++;showHint=!showHint;renderQuestion();};
+ $("exit").onclick=()=>{currentLevel=null;selected=null;sortPicks=[];render();};
+ const next=$("advance");if(next)next.onclick=advance;
 }
-function continueBattle(){
- if(phase==="win"&&state.chapter<CHAPTERS.length-1)state.chapter++;
- state.enemyHp=CHAPTERS[state.chapter].hp;state.hp=100;state.combo=0;state.round=1;mode="battle";phase="question";selected=null;showHint=false;newQuestion();save();render();
-}
-function switchChapter(i){
- if(i>state.unlocked)return;
- state.chapter=i;state.enemyHp=CHAPTERS[i].hp;state.hp=100;state.combo=0;state.round=1;mode="battle";phase="question";selected=null;showHint=false;newQuestion();save();render();
-}
-$("hintBtn").onclick=()=>{showHint=!showHint;render();};
-$("reviewBtn").onclick=()=>{if(!state.mistakes.length)return;mode="review";reviewIndex=0;selected=null;phase="question";showHint=false;render();};
-$("nextBtn").onclick=goNext;$("continueBtn").onclick=continueBattle;
-document.querySelectorAll("[data-diff]").forEach(el=>el.onclick=()=>{state.difficulty=Number(el.dataset.diff);selected=null;phase="question";showHint=false;newQuestion();save();render();});
-$("resetBtn").onclick=()=>{if(!confirm("確定要清除本機的遊戲進度及錯題紀錄？"))return;state=initial();mode="battle";phase="question";selected=null;showHint=false;newQuestion();save();render();};
-newQuestion();render();
-</script>
-</body></html>
+function render(){renderMap();renderQuestion();}
+$("reset").onclick=()=>{if(!confirm("確定要清除 v4 闖關紀錄？"))return;state=fresh();currentLevel=null;selected=null;sortPicks=[];finished=false;persist();render();};
+render();
+
+</script></body></html>

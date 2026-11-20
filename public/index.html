@@ -1,6 +1,6 @@
 <!doctype html><html lang="zh-Hant"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#f7f9fc"><title>Math Quest 4.0｜國七數學闖關島</title>
+<meta name="theme-color" content="#f7f9fc"><title>Math Quest 4.2｜國七數學闖關島</title>
 <style>
 :root{font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;color:#263448;background:#f3f7fc}*{box-sizing:border-box}body{margin:0}button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.52}
 .wrap{max-width:1170px;margin:0 auto;padding:22px 16px 48px}header{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:12px 0 22px}
@@ -27,10 +27,10 @@
 @media(max-width:1060px){.layout{grid-template-columns:220px minmax(0,1fr)}.layout aside{grid-column:1/-1}.asidePanel{display:inline-block;vertical-align:top;width:49%;margin-right:1%}}
 @media(max-width:720px){.layout{display:block}.wrap{padding:12px}.panel{padding:15px}.levels{grid-template-columns:repeat(2,minmax(0,1fr))}.chapterList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.chapter{margin:0}.hero{padding:14px}.line-grid .tick{min-width:31px}.asidePanel{display:block;width:100%}}
 .reward{background:#fff4da;border:1px solid #f1d48b;border-radius:18px;padding:18px;margin:15px auto;max-width:400px}.reward h2{margin:6px}.shopItem{width:100%;border:1px solid #d5e5f4;border-radius:12px;background:#f8fbff;margin:5px 0;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;color:#2b4564;font-weight:750}.shopItem small{color:#a66b12}.shopItem:hover{background:#edf7ff}</style></head><body>
-<div class="wrap"><header><div><div class="eyebrow">MATH QUEST · VERSION 4.0</div><h1>🏝️ 國七數學闖關島</h1><p class="caption">解謎、尋寶、挑戰｜七年級全年原創題庫</p></div><div class="badge">⭐ <span id="totalStars">0</span> 星</div></header>
+<div class="wrap"><header><div><div class="eyebrow">MATH QUEST · VERSION 4.2</div><h1>🏝️ 國七數學闖關島</h1><p class="caption">解謎、尋寶、挑戰｜七年級全年原創題庫</p></div><div class="badge">⭐ <span id="totalStars">0</span> 星</div></header>
 <div style="margin:0 0 18px;padding:18px 20px;border-radius:18px;background:linear-gradient(115deg,#173d61,#237b86);color:white;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><strong style="font-size:20px">🎮 新增：數學小遊戲館</strong><p style="margin:7px 0 0;color:#d9f5ef;font-size:13px">10 款互動遊戲｜數字消除、因數合成、坐標尋寶、鏡像拼圖等</p></div><a href="./games.html" style="background:#fff;color:#175676;padding:12px 18px;border-radius:12px;font-weight:800;text-decoration:none">立即開始玩 →</a></div>
 <div class="layout"><nav class="panel"><h2>📚 章節選擇</h2><div class="chapterList" id="chapterSelect"></div></nav>
-<main><div class="hero"><div class="eyebrow">目前冒險區域</div><h2 id="chapterHeading"></h2><p>每章六關 · 過關解鎖下一關 · 最多十八顆星</p></div>
+<main><div class="hero" id="heroBanner"><div class="eyebrow">目前冒險區域</div><h2 id="zoneTitle"></h2><p id="zoneDesc"></p><p>每章六關 · 可自由選章 · 各章關卡獨立解鎖</p></div>
 <div class="levels" id="levelMap"></div><section class="panel" id="gameBoard"></section></main>
 <aside><section class="panel asidePanel"><h2>🏅 學習進度</h2><div class="metric" id="progressText"></div><div class="metric" id="accuracy"></div><p class="micro">答題正確率</p><div class="metric" id="mistakeCount"></div><p class="micro">錯題紀錄數</p></section>
 <section class="panel asidePanel"><h2>🎁 獎勵商店</h2><div class="metric">🪙 <span id="coins">0</span><small>金幣餘額</small></div><p class="micro">目前稱號：<b id="titleEquipped">數學新手</b></p><div id="shop"></div><p class="foot">新關卡首次通關可領一次寶箱。重玩可提升星等，不會重複獲得寶箱。</p></section><section class="panel asidePanel"><h2>💾 儲存與版本</h2><p class="foot">進度保存在這台裝置的瀏覽器。舊版 RPG 已備份到 GitHub 的 archive/rpg-v3.html。</p><button class="secondary reset" id="reset">清除 v4 進度</button><p class="foot">國七課程架構為原創練習安排，尚須依實際翰林教科書的年度及小節逐一核對。部分圖形題目前先以文字題實作。</p></section></aside></div></div>
@@ -183,11 +183,40 @@ const LEVELS=[
 ["密碼寶箱","解開三位密碼","code","🔐"],["等式天平","找出缺少的數","balance","⚖️"],
 ["冰原迷宮","連續解開四個機關","maze","🧭"],["章節大挑戰","五題混合考驗","boss","🏆"]
 ];
+const ZONES=[
+ {name:"正負數森林",emoji:"🌲",description:"穿越數線森林，排列正負數，解開整數機關。",gradient:"linear-gradient(115deg,#dff4e6,#e8f3ff)"},
+ {name:"質因數礦山",emoji:"⛰️",description:"採集質因數晶石，打開公因數之門，讓分數熔爐重新運轉。",gradient:"linear-gradient(115deg,#f5e8d4,#edf0ff)"},
+ {name:"方程式城堡",emoji:"🏰",description:"利用未知數解開城堡機關，找回遺失的代數鑰匙。",gradient:"linear-gradient(115deg,#e9e0ff,#ebf6ff)"},
+ {name:"雙生密碼塔",emoji:"🗝️",description:"用兩條線索消去未知數，逐層破解雙塔密碼。",gradient:"linear-gradient(115deg,#dff2fa,#e6e0fa)"},
+ {name:"座標星際港",emoji:"🪐",description:"探索坐標平面，用直線方程式解讀航行路線。",gradient:"linear-gradient(115deg,#e0eaff,#dff5f3)"},
+ {name:"比例鍊金村",emoji:"🧪",description:"調整藥水比例，破解正比與反比的調配任務。",gradient:"linear-gradient(115deg,#e1f8ea,#faf1d5)"},
+ {name:"不等式火山",emoji:"🌋",description:"找出安全範圍，避開不等式陷阱。",gradient:"linear-gradient(115deg,#ffe3dc,#fff3db)"},
+ {name:"數據偵探城",emoji:"🔍",description:"調查統計線索，找出資料的真相。",gradient:"linear-gradient(115deg,#e2f6fb,#edf3d9)"},
+ {name:"鏡像機關神殿",emoji:"🪞",description:"運用對稱與立體觀察，通過鏡像機關。",gradient:"linear-gradient(115deg,#f7e3f6,#e2edff)"}
+];
+const ZONE_LEVELS=[
+ [["數線尋寶","數線定位","🎯"],["數字排序","正負數大小比較","🧩"],["整數密碼箱","整數四則運算","🔐"],["等式天平","未知數與運算","⚖️"],["冰原迷宮","整數混合計算","🧭"],["森林大挑戰","整數觀念綜合","🏆"]],
+ [["質因數礦坑","質因數探索","💎"],["公因數之門","最大公因數","🚪"],["倍數時鐘","最小公倍數","🕰️"],["分數鍛造坊","約分與最簡分數","⚒️"],["分數熔爐","異分母運算","🔥"],["礦山大挑戰","分數與因倍數綜合","🏆"]],
+ [["未知數之門","解一元一次方程式","🔑"],["括號陷阱","去括號與移項","🧩"],["等式守衛","合併同類項","🛡️"],["數字密室","方程式解謎","🔐"],["城堡任務","文字應用題","🏰"],["代數大挑戰","方程式綜合","🏆"]],
+ [["二元線索","兩個未知數","🗝️"],["消去法密室","加減消去法","🔐"],["代入之橋","代入消去法","🌉"],["雙塔密碼","聯立方程式","🏯"],["票價推理","生活應用題","🎫"],["雙塔大挑戰","聯立綜合","🏆"]],
+ [["坐標雷達","坐標與象限","📍"],["象限之門","正負坐標","🚪"],["航線方程式","直線代入","🚀"],["截距航道","直線與坐標軸","🛰️"],["座標導航","圖形變化","🧭"],["星港大挑戰","坐標與直線綜合","🏆"]],
+ [["比例石碑","比例式","🗿"],["正比泉水","正比關係","💧"],["反比風車","反比關係","🌪️"],["鍊金配方","比例應用","⚗️"],["調配機關","比例推理","🧪"],["鍊金大挑戰","比例綜合","🏆"]],
+ [["不等號守衛","比較關係","🚦"],["整數安全區","整數解","🟢"],["移項路口","不等式求解","🛤️"],["反向陷阱","負數與不等號","🌋"],["安全路線","生活應用","🧭"],["火山大挑戰","不等式綜合","🏆"]],
+ [["資料採集站","數據整理","📦"],["中位數線索","中位數","🕵️"],["平均數碼頭","平均數","⚓"],["眾數密碼","眾數","🔐"],["圖表偵查","圖表判讀","📊"],["偵探大挑戰","統計綜合","🏆"]],
+ [["對稱之門","線對稱","🪞"],["鏡像走廊","鏡射坐標","🌀"],["圖形拼片","對稱距離","🧩"],["立體觀測站","三視圖觀察","📦"],["積木神殿","立體結構","🏛️"],["鏡像大挑戰","幾何綜合","🏆"]]
+];
+function zoneLevel(ch,lv){return ZONE_LEVELS[ch][lv];}
 const STORE="math-quest-puzzle-v4";
 const $=id=>document.getElementById(id);
 const fresh=()=>({chapter:0,unlockedChapter:0,stars:{},levelUnlock:{},attempts:0,correct:0,errors:[],bestCombo:0,coins:0,chests:{},openedChests:{},ownedItems:[],equipped:"starter"});
 let state=fresh();
 try{const raw=JSON.parse(localStorage.getItem(STORE));if(raw&&typeof raw==="object"){state={...fresh(),...raw};state.stars=state.stars||{};state.levelUnlock=state.levelUnlock||{};state.errors=Array.isArray(state.errors)?state.errors:[];state.chests=state.chests||{};state.openedChests=state.openedChests||{};state.ownedItems=Array.isArray(state.ownedItems)?state.ownedItems:[];state.coins=Number.isFinite(state.coins)?state.coins:0;state.equipped=state.equipped||"starter";}}catch(e){}
+try{
+ if(typeof window!=="undefined"){
+  const requested=Number(new URLSearchParams(window.location.search).get("chapter"));
+  if(Number.isInteger(requested)&&requested>=1&&requested<=CHAPTERS.length)state.chapter=requested-1;
+ }
+}catch(e){}
 let openedReward=null,currentLevel=null,questions=[],index=0,selected=null,mistakes=0,hints=0,finished=false,combo=0,sortPicks=[],notice="",showHint=false,answerFeedback="",reviewMode=false;
 function persist(){try{localStorage.setItem(STORE,JSON.stringify(state));}catch(e){}}
 function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
@@ -197,7 +226,41 @@ function makeLine(){const target=rand(-8,8);return {kind:"line",title:"請在數
 function makeSort(){const values=new Set();while(values.size<4)values.add(rand(-12,12));const sorted=[...values].sort((a,b)=>a-b);return {kind:"sort",title:"請依照從小到大排序",values:shuffle(sorted),answer:sorted.join(","),hint:"越靠數線左側的數越小，負數要特別小心。",why:"正確順序："+sorted.join(" < "),topic:"正負數比較"};}
 function makeBalance(){const x=rand(-12,12),a=rand(-9,9),sum=x+a;return {kind:"input",title:"天平兩邊要相等：□ "+(a>=0?"+ "+a:"- "+Math.abs(a))+" = "+sum+"，□ = ?",answer:String(x),hint:"想想等式兩邊應該怎麼同時移動數字。",why:"□ = "+sum+" - ("+a+") = "+x,topic:"等式與整數運算"};}
 function makeMath(ch,d){const q=generate(ch,d);return {kind:"choice",title:q.prompt,answer:q.answer,options:q.options.map(String),why:q.why,hint:q.hint,topic:q.topic};}
+function chapterTwoQuestion(lv){
+ const a=rand(2,10),b=rand(2,9),k=rand(2,6);
+ const n=a*k,m=b*k;
+ if(lv===0){
+   const num=a*b;let left=num,largest=2;
+   for(let p=2;p<=left;p++){while(left%p===0){largest=p;left/=p;}}
+   return {kind:"input",title:"將 "+num+" 質因數分解後，最大的質因數是多少？",answer:String(largest),hint:"先除以最小的質數，再繼續分解。",why:num+" 的質因數中最大的是 "+largest+"。",topic:"質因數分解"};
+ }
+ if(lv===1){
+   const answer=gcd(n,m);
+   return {kind:"input",title:n+" 和 "+m+" 的最大公因數是多少？",answer:String(answer),hint:"先找兩數共同的質因數，再取較小的指數。",why:"最大公因數為 "+answer+"。",topic:"最大公因數"};
+ }
+ if(lv===2){
+   const answer=n*m/gcd(n,m);
+   return {kind:"input",title:"兩個鐘每 "+n+" 分鐘與 "+m+" 分鐘各響一次，現在同時響，至少經過多少分鐘會再同時響？",answer:String(answer),hint:"求兩個時間間隔的最小公倍數。",why:"最小公倍數 = "+n+" × "+m+" ÷ "+gcd(n,m)+" = "+answer+"。",topic:"最小公倍數"};
+ }
+ if(lv===3){
+   const num=rand(2,9),den=rand(10,18),times=rand(2,7);
+   const answer=fraction(num,den);
+   const pool=[answer,fraction(num+1,den),fraction(num,den+1),fraction(num+2,den+1),fraction(num,den+2)].filter((x,i,ar)=>ar.indexOf(x)===i);
+   let bump=1;while(pool.length<4){const extra=fraction(num+bump,den+3);if(!pool.includes(extra))pool.push(extra);bump++;}
+   return {kind:"choice",title:"將 "+(num*times)+"/"+(den*times)+" 約成最簡分數，結果為何？",answer,options:shuffle(pool.slice(0,4)),hint:"先找分子分母的最大公因數。",why:"分子分母同除公因數，約分後是 "+answer+"。",topic:"分數約分"};
+ }
+ if(lv===4){
+   const num1=rand(1,8),den1=rand(3,9),num2=rand(1,8),den2=rand(3,9);
+   const answer=fraction(num1*den2+num2*den1,den1*den2);
+   const candidates=[answer,fraction(num1+num2,den1+den2),fraction(num1*den2-num2*den1,den1*den2),fraction(num1*den2+num2*den1,den1*den2+1),fraction(num1*den2+num2*den1+1,den1*den2)];
+   const pool=[...new Set(candidates)];let j=1;
+   while(pool.length<4){const alt=fraction(num1*den2+num2*den1+j,den1*den2+2);if(!pool.includes(alt))pool.push(alt);j++;}
+   return {kind:"choice",title:num1+"/"+den1+" + "+num2+"/"+den2+" = ?（最簡分數）",answer,options:shuffle(pool.slice(0,4)),hint:"先通分，分子相加後再約分。",why:"("+num1+"×"+den2+" + "+num2+"×"+den1+")/("+den1+"×"+den2+") = "+answer+"。",topic:"異分母加法"};
+ }
+ return makeMath(1,2);
+}
 function makeQuestion(ch,lv,idx,exclude){
+ if(ch===1){for(let j=0;j<25;j++){const q=chapterTwoQuestion(lv);if(!exclude.includes(q.title))return q;}return chapterTwoQuestion(lv);}
  if(ch===0){
   if(lv===0)return makeLine();
   if(lv===1)return makeSort();
@@ -215,8 +278,8 @@ function startLevel(lv){
  render();
 }
 function chooseChapter(ch){
- if(ch>state.unlockedChapter)return;
- state.chapter=ch;currentLevel=null;finished=false;persist();render();
+ if(!Number.isInteger(ch)||ch<0||ch>=CHAPTERS.length)return;
+ state.chapter=ch;currentLevel=null;finished=false;selected=null;sortPicks=[];showHint=false;openedReward=null;persist();render();
 }
 function verify(value){
  if(selected!==null||finished)return;
@@ -244,11 +307,15 @@ function finishLevel(){
 }
 function numStars(ch,lv){return state.stars[chapterKey(ch,lv)]||0;}
 function renderMap(){
- $("chapterSelect").innerHTML=CHAPTERS.map((c,i)=>'<button class="chapter '+(state.chapter===i?'on':'')+'" data-ch="'+i+'" '+(i>state.unlockedChapter?'disabled':'')+'><span>'+c[1]+'</span><div><strong>'+(i<3?'七上':'七下')+' · '+escapeHTML(c[0])+'</strong><small>'+(i>state.unlockedChapter?'🔒 尚未解鎖':"已獲得 "+[0,1,2,3,4,5].reduce((s,n)=>s+numStars(i,n),0)+" / 18 星")+'</small></div></button>').join("");
+ $("chapterSelect").innerHTML=CHAPTERS.map((c,i)=>'<button class="chapter '+(state.chapter===i?'on':'')+'" data-ch="'+i+'"><span>'+c[1]+'</span><div><strong>'+(i<3?'七上':'七下')+' · '+escapeHTML(c[0])+'</strong><small>'+(i>state.unlockedChapter?'可自由試玩':'已獲得 '+[0,1,2,3,4,5].reduce((s,n)=>s+numStars(i,n),0)+' / 18 星')+'</small></div></button>').join("");
  document.querySelectorAll("[data-ch]").forEach(b=>b.onclick=()=>chooseChapter(Number(b.dataset.ch)));
- $("levelMap").innerHTML=LEVELS.map((x,i)=>'<button class="level '+(i>chapterUnlock(state.chapter)?'locked':'')+' '+(currentLevel===i?'on':'')+'" data-lv="'+i+'" '+(i>chapterUnlock(state.chapter)?'disabled':'')+'><span class="lvl-emoji">'+x[3]+'</span><strong>第 '+(i+1)+' 關 · '+x[0]+'</strong><small>'+x[1]+'</small><span class="stars">'+(numStars(state.chapter,i)?"★".repeat(numStars(state.chapter,i))+"☆".repeat(3-numStars(state.chapter,i)):(i>chapterUnlock(state.chapter)?"🔒":"○ ○ ○"))+'</span></button>').join("");
+ $("levelMap").innerHTML=ZONE_LEVELS[state.chapter].map((x,i)=>'<button class="level '+(i>chapterUnlock(state.chapter)?'locked':'')+' '+(currentLevel===i?'on':'')+'" data-lv="'+i+'" '+(i>chapterUnlock(state.chapter)?'disabled':'')+'><span class="lvl-emoji">'+x[2]+'</span><strong>第 '+(i+1)+' 關 · '+x[0]+'</strong><small>'+x[1]+'</small><span class="stars">'+(numStars(state.chapter,i)?"★".repeat(numStars(state.chapter,i))+"☆".repeat(3-numStars(state.chapter,i)):(i>chapterUnlock(state.chapter)?"🔒":"○ ○ ○"))+'</span></button>').join("");
  document.querySelectorAll("[data-lv]").forEach(b=>b.onclick=()=>startLevel(Number(b.dataset.lv)));
- const stars=Object.values(state.stars).reduce((s,n)=>s+n,0);
+ const z=ZONES[state.chapter];
+ $("heroBanner").style.background=z.gradient;
+ $("zoneTitle").textContent=z.emoji+" "+z.name;
+ $("zoneDesc").textContent=z.description;
+  const stars=Object.values(state.stars).reduce((s,n)=>s+n,0);
  $("totalStars").textContent=stars;
  $("coins").textContent=state.coins;
  $("titleEquipped").textContent=SHOP.find(i=>i.id===state.equipped)?.name||"數學新手";
@@ -257,7 +324,7 @@ function renderMap(){
  $("accuracy").textContent=state.attempts?Math.round(state.correct/state.attempts*100)+"%":"0%";
  $("mistakeCount").textContent=state.errors.length;
  $("progressText").textContent="已完成 "+Object.keys(state.stars).length+" / "+(CHAPTERS.length*6)+" 關";
- $("chapterHeading").textContent=CHAPTERS[state.chapter][1]+" "+CHAPTERS[state.chapter][0];
+
 }
 function renderQuestion(){
  const board=$("gameBoard");
@@ -266,9 +333,9 @@ function renderQuestion(){
   const stars=numStars(state.chapter,currentLevel);
   const chestKey=chapterKey(state.chapter,currentLevel),pending=!!state.chests[chestKey];
   const reward=pending?'<div class="reward"><div class="big-icon">🎁</div><h2>獲得通關寶箱！</h2><p>開啟後可獲得 30–100 金幣，章節挑戰還有額外獎勵。</p><button class="primary" id="openChest">✨ 開啟寶箱</button></div>':openedReward!==null?'<div class="reward"><div class="big-icon">🪙</div><h2>獲得 '+openedReward+' 金幣！</h2><p>可以到獎勵商店兌換稱號。</p></div>':'<p>本關的首次通關寶箱已領取；重玩可提高星等。</p>';
-  board.innerHTML='<div class="empty"><div class="big-icon">🎉</div><p class="eyebrow">關卡完成</p><h2>'+LEVELS[currentLevel][0]+' 過關！</h2><div class="huge-stars">'+"★".repeat(stars)+"☆".repeat(3-stars)+'</div><p>答錯 '+mistakes+' 次 · 使用提示 '+hints+' 次</p>'+reward+'<div class="action-row"><button class="secondary" id="replay">重新挑戰</button><button class="primary" id="goNext" '+(pending?'disabled':'')+'>'+(currentLevel===5?'返回地圖':'下一關 →')+'</button></div></div>';
+  board.innerHTML='<div class="empty"><div class="big-icon">🎉</div><p class="eyebrow">關卡完成</p><h2>'+zoneLevel(state.chapter,currentLevel)[0]+' 過關！</h2><div class="huge-stars">'+"★".repeat(stars)+"☆".repeat(3-stars)+'</div><p>答錯 '+mistakes+' 次 · 使用提示 '+hints+' 次</p>'+reward+'<div class="action-row"><button class="secondary" id="replay">重新挑戰</button><button class="primary" id="goNext" '+(pending?'disabled':'')+'>'+(currentLevel===5?(state.chapter<CHAPTERS.length-1?'進入下一冒險區域 →':'返回地圖'):'下一關 →')+'</button></div></div>';
   const chest=$("openChest");if(chest)chest.onclick=openChest;
-  $("replay").onclick=()=>startLevel(currentLevel);$("goNext").onclick=()=>{if(currentLevel<5)startLevel(currentLevel+1);else{currentLevel=null;render();}};return;
+  $("replay").onclick=()=>startLevel(currentLevel);$("goNext").onclick=()=>{if(currentLevel<5)startLevel(currentLevel+1);else if(state.chapter<CHAPTERS.length-1){chooseChapter(state.chapter+1);}else{currentLevel=null;render();}};return;
  }
  const q=questions[index];
  let fragment="";
@@ -281,7 +348,7 @@ function renderQuestion(){
  }else{
   fragment='<div class="choices">'+q.options.map((v,i)=>'<button class="answer '+(selected!==null&&String(v)===q.answer?'right':selected===String(v)?'wrong':'')+'" data-val="'+escapeHTML(v)+'" '+(selected!==null?'disabled':'')+'><small>'+("ABCD"[i])+'</small>'+escapeHTML(v)+'</button>').join("")+'</div>';
  }
- board.innerHTML='<div class="task-top"><span class="eyebrow">第 '+(currentLevel+1)+' 關 · '+LEVELS[currentLevel][0]+'</span><span>題目 '+(index+1)+' / '+questions.length+'</span></div><div class="step-track">'+questions.map((_,i)=>'<span class="'+(i<=index?'filled':'')+'"></span>').join("")+'</div><div class="topic">'+escapeHTML(q.topic)+'</div><h2 class="question">'+escapeHTML(q.title)+'</h2>'+fragment+'<div class="action-row"><button class="secondary" id="hint">💡 '+(showHint?'收起提示':'查看提示')+'</button><button class="secondary" id="exit">返回地圖</button></div>'+(showHint?'<div class="feedback">'+escapeHTML(q.hint)+'</div>':'')+(selected!==null?'<div class="feedback '+(selected===q.answer?'success':'error')+'"><strong>'+escapeHTML(notice)+'</strong><p>'+escapeHTML(answerFeedback)+'</p></div><button id="advance" class="primary full">'+(index+1===questions.length?'完成關卡':'繼續下一題 →')+'</button>':'');
+ board.innerHTML='<div class="task-top"><span class="eyebrow">第 '+(currentLevel+1)+' 關 · '+zoneLevel(state.chapter,currentLevel)[0]+'</span><span>題目 '+(index+1)+' / '+questions.length+'</span></div><div class="step-track">'+questions.map((_,i)=>'<span class="'+(i<=index?'filled':'')+'"></span>').join("")+'</div><div class="topic">'+escapeHTML(q.topic)+'</div><h2 class="question">'+escapeHTML(q.title)+'</h2>'+fragment+'<div class="action-row"><button class="secondary" id="hint">💡 '+(showHint?'收起提示':'查看提示')+'</button><button class="secondary" id="exit">返回地圖</button></div>'+(showHint?'<div class="feedback">'+escapeHTML(q.hint)+'</div>':'')+(selected!==null?'<div class="feedback '+(selected===q.answer?'success':'error')+'"><strong>'+escapeHTML(notice)+'</strong><p>'+escapeHTML(answerFeedback)+'</p></div><button id="advance" class="primary full">'+(index+1===questions.length?'完成關卡':'繼續下一題 →')+'</button>':'');
  board.querySelectorAll("[data-num]").forEach(b=>b.onclick=()=>verify(b.dataset.num));
  board.querySelectorAll("[data-val]").forEach(b=>b.onclick=()=>verify(b.dataset.val));
  board.querySelectorAll("[data-sort]").forEach(b=>b.onclick=()=>{sortPicks.push(Number(b.dataset.sort));if(sortPicks.length===q.values.length)verify(sortPicks.join(","));else renderQuestion();});

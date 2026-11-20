@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Math Quest｜數學小遊戲館</title><meta name="theme-color" content="#1e3553">
+<style>
+:root{font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;background:#f0f5fc;color:#24344a}*{box-sizing:border-box}
+body{margin:0}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}
+a{color:#186bb2}.wrap{max-width:1120px;margin:auto;padding:18px 14px 50px}
+header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+header h1{margin:5px 0;font-size:clamp(24px,5vw,35px)}.sub{color:#61768e;font-size:14px;margin:4px 0}
+.back{border-radius:12px;background:white;padding:11px 14px;text-decoration:none;font-weight:800;border:1px solid #dbe5f0}
+.layout{display:grid;grid-template-columns:330px 1fr;gap:16px}
+.card{background:white;border:1px solid #dce7f4;border-radius:20px;padding:19px;box-shadow:0 8px 24px #173f6a0a;margin-bottom:15px}
+.library{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.game-tab{background:#f7faff;border:2px solid #e3ebf5;border-radius:14px;padding:14px 9px;text-align:center;min-height:112px;color:#29415b}
+.game-tab.on{border-color:#21977f;background:#e8faf4}.game-tab .emoji{display:block;font-size:29px;margin-bottom:7px}
+.game-tab b{display:block;font-size:13px}.game-tab small{color:#70849b;font-size:11px}
+h2{margin:0 0 10px;font-size:21px}.eyebrow{font-size:12px;font-weight:800;color:#4878a2;letter-spacing:.07em}
+.description{color:#5f7389;line-height:1.65;font-size:14px}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:13px}
+.badge{font-size:12px;font-weight:800;border-radius:30px;padding:7px 12px;background:#e8f2fd;color:#2765a0}.progress{display:flex;gap:5px;margin:16px 0}.progress i{display:block;flex:1;height:7px;border-radius:20px;background:#e3eaf2}.progress i.done{background:#26b487}
+.task{font-size:clamp(18px,3vw,25px);font-weight:800;line-height:1.55;margin:10px 0 19px}
+.btn{border:0;background:#246fb5;color:white;border-radius:12px;padding:13px 17px;font-weight:800}.btn.alt{background:#e9f1fa;color:#315b82}.btn:focus-visible,.tile:focus-visible{outline:3px solid #f5ad31;outline-offset:2px}
+.action{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.feedback{border-radius:12px;padding:13px;margin-top:15px;background:#e9f3ff;line-height:1.6}.feedback.ok{background:#ddf7e9}.feedback.bad{background:#fff0ed}
+.tile-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.tile{min-height:63px;border-radius:12px;border:2px solid #d9e6f4;background:#f5f9ff;font-weight:850;font-size:21px;color:#2b4769}
+.tile.chosen{background:#2e8aab;color:white;border-color:#1b718e}.tile.good{background:#def7e8;border-color:#2ebc81}
+.operator-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:15px 0}
+.operator-row strong{font-size:24px}.operator-row button{padding:10px 16px}
+.target{background:#1b3656;color:white;text-align:center;padding:16px;border-radius:16px;margin:12px 0}.target small{display:block;color:#cfdfed}.target strong{font-size:37px}
+.answer-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.option{padding:15px;border-radius:12px;border:2px solid #d6e4f4;background:#f6faff;font-weight:800;color:#274663;font-size:18px}
+.option.chosen{background:#dff4ed;border-color:#1e9d79}
+.input{border:2px solid #ccdef0;border-radius:12px;padding:12px;font-size:20px;max-width:100%;width:190px}
+.paper{border:2px dashed #bacfe2;border-radius:16px;background:#f6faff;padding:16px;margin:12px 0;text-align:center}
+.equation{font-size:clamp(19px,4vw,27px);font-weight:800;line-height:1.9}
+.plot{display:grid;grid-template-columns:repeat(7,1fr);max-width:390px;margin:14px auto;border:1px solid #a9c6df}
+.plot button{aspect-ratio:1;background:#f7fbff;border:1px solid #d5e4f2;font-size:13px;color:#355b82;padding:2px}
+.plot button:hover{background:#d5eafd}.plot button.center{background:#e6f3df}.plot button.marked{background:#ffe9ae}
+.shape{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:3px;max-width:390px;margin:13px auto}
+.shape button{aspect-ratio:1;background:#eef4fb;border:1px solid #c9dcef;border-radius:4px}.shape button.active{background:#4e88cc}.shape button.axis{border-left:2px dashed #c0781a}
+.bargraph{display:flex;align-items:end;justify-content:center;gap:18px;height:180px;padding:15px;background:#f4f8ff;border-radius:12px}
+.bargraph>div{width:52px;text-align:center}.bargraph .bar{border-radius:8px 8px 2px 2px;background:#4a9dcb;width:100%;min-height:5px}.bargraph small{font-weight:800}
+.note{color:#71839a;font-size:12px;line-height:1.65}footer{color:#75879e;font-size:12px;margin-top:20px;line-height:1.6}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.library{grid-template-columns:repeat(2,1fr)}.card{padding:15px}.tile{min-height:55px}.plot button{font-size:10px}}
+</style></head>
+<body><div class="wrap">
+<header><div><div class="eyebrow">MATH QUEST · MINI GAME LAB v1</div><h1>🎮 數學小遊戲館</h1><p class="sub">讓數學變成操作、組合、探索與解謎</p></div><a class="back" href="./">← 返回闖關島</a></header>
+<div class="layout"><aside><section class="card"><h2>選擇遊戲</h2><div class="library" id="library"></div></section>
+<section class="card"><h2>🏅 遊戲紀錄</h2><p class="sub">已完成小遊戲：<b id="completedCount">0</b> / 10</p><p class="sub">累積星星：<b id="starCount">0</b></p><p class="note">每款遊戲 3 個回合。答錯可重試，三星需三回合都一次成功。紀錄儲存在本機瀏覽器。</p><button class="btn alt" id="reset">清除小遊戲成績</button></section></aside>
+<main><section class="card"><div class="toolbar"><span class="badge" id="gameTag">數字消除</span><span class="badge" id="roundTag">回合 1 / 3</span></div><h2 id="gameTitle">數字消除挑戰</h2><p class="description" id="gameDesc"></p><div class="progress" id="progress"></div><div id="gameSurface"></div><div id="feedback" class="feedback" style="display:none" aria-live="polite"></div><div class="action" id="actions"></div></section></main>
+</div><footer>本頁為原創的國七數學互動練習，不含教科書原題。部分遊戲為文字／格子化 MVP，不是物理引擎或 3D 遊戲。請依實際教材版本核對知識點。</footer>
+</div>
+<script>
+"use strict";
+const $=id=>document.getElementById(id),rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+function shuffle(items){let a=[...items];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;}
+function esc(t){return String(t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+const games=[
+{id:"number",emoji:"🧊",name:"數字消除",desc:"選兩張數字卡和運算符號，組成指定的目標值。",chapter:"正負數"},
+{id:"factor",emoji:"🧱",name:"因數合成",desc:"挑出兩個因數，合成指定的目標整數。",chapter:"因數與倍數"},
+{id:"pizza",emoji:"🍕",name:"分數披薩",desc:"點擊披薩切片，拼出要求的分數。",chapter:"分數"},
+{id:"balance",emoji:"⚖️",name:"等式天平",desc:"調整砝碼數值，使等式左右兩邊相等。",chapter:"一元一次方程式"},
+{id:"lock",emoji:"🔐",name:"雙重密碼",desc:"利用兩條線索找到 x 與 y 的值，打開密碼鎖。",chapter:"聯立方程式"},
+{id:"coord",emoji:"📍",name:"坐標尋寶",desc:"在直角坐標網格中點出寶藏位置。",chapter:"直角坐標"},
+{id:"potion",emoji:"🧪",name:"比例藥水",desc:"控制材料份數，維持藥水的正確調配比例。",chapter:"比例"},
+{id:"ineq",emoji:"🚦",name:"安全區域",desc:"選出符合不等式的安全格子，躲過障礙。",chapter:"一元一次不等式"},
+{id:"stats",emoji:"📊",name:"數據偵探",desc:"觀察長條圖，推理平均數或全體總數。",chapter:"統計"},
+{id:"mirror",emoji:"🪞",name:"鏡像拼圖",desc:"在鏡面另一側補出完全對稱的圖案。",chapter:"線對稱"}
+];
+const key="math-mini-v1";let history={};try{history=JSON.parse(localStorage.getItem(key))||{};}catch(e){}
+let active="number",round=0,successes=0,misses=0,solved=false,task={},selection=[],op="+",feedback="",lastCorrect=null;
+const save=()=>{try{localStorage.setItem(key,JSON.stringify(history));}catch(e){}};
+function makeTask(id){
+ let a,b,c,d,options,answer;
+ switch(id){
+ case "number":{
+  const values=shuffle([-9,-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8,9]).slice(0,12);
+  const i=rand(0,11),j=(i+rand(1,11))%12;
+  const operation=rand(0,1)?"−":"+";
+  const target=operation==="+"?values[i]+values[j]:values[i]-values[j];
+  return {values,target,solution:[values[i],values[j]],operation};
+ }
+ case "factor":{
+  a=rand(2,12);b=rand(2,12);return {a,b,target:a*b,values:shuffle([a,b,...shuffle([2,3,4,5,6,7,8,9,10,11,12]).slice(0,10)])};
+ }
+ case "pizza":{const denominator=shuffle([4,6,8,10,12])[rand(0,4)];const numerator=rand(1,denominator-1);return {denominator,numerator};}
+ case "balance":{a=rand(-8,12);b=rand(-8,8);c=rand(2,6);return {a,b,c,total:c*a+b};}
+ case "lock":{a=rand(-5,9);b=rand(-5,9);c=rand(2,5);return {a,b,c,sum:a+b,mix:c*a+b};}
+ case "coord":{a=rand(-3,3);b=rand(-3,3);return {x:a,y:b};}
+ case "potion":{a=rand(1,5);b=rand(2,6);c=rand(2,5);return {a,b,multiplier:c,red:a*c,blue:b*c};}
+ case "ineq":{a=rand(-4,4);b=rand(1,3);return {bound:a,offset:b,target:a+b,operator:rand(0,1)?"<":">"};}
+ case "stats":{const vals=[rand(2,9),rand(2,9),rand(2,9),rand(2,9)];return {vals,mode:rand(0,1)};}
+ case "mirror":{const coords=[];for(let y=0;y<5;y++)for(let x=0;x<4;x++)if(rand(0,3)===0)coords.push(y*9+x);if(coords.length===0)coords.push(2);return {coords};}
+ }
+}
+function start(id){active=id;round=0;successes=0;misses=0;newRound();render();}
+function newRound(){task=makeTask(active);selection=[];op="+";solved=false;feedback="";lastCorrect=null;}
+function check(correct,message){
+ if(solved)return;
+ lastCorrect=correct;
+ if(correct){successes++;solved=true;feedback="✅ 成功！"+message;}
+ else{misses++;feedback="🔎 再試一次。"+message;}
+ render();
+}
+function getButtons(options,callback,disabled=false){return '<div class="answer-grid">'+options.map((v,i)=>'<button class="option" data-choice="'+i+'" '+(disabled?'disabled':'')+'>'+esc(v)+'</button>').join("")+'</div>';}
+function makeUI(){
+ let html="";
+ if(active==="number"){
+  html='<div class="target"><small>指定目標</small><strong>'+task.target+'</strong></div><div class="tile-grid">'+task.values.map((v,i)=>'<button class="tile '+(selection.includes(i)?"chosen":"")+'" data-number="'+i+'" '+(solved?'disabled':'')+'>'+v+'</button>').join("")+'</div>';
+  const x=selection.length?task.values[selection[0]]:"?",y=selection.length===2?task.values[selection[1]]:"?";
+  html+='<div class="operator-row"><strong>'+x+'</strong><button class="btn '+(op==="+"?"":"alt")+'" data-op="+">＋</button><button class="btn '+(op==="−"?"":"alt")+'" data-op="−">−</button><strong>'+y+'</strong><strong>= '+(selection.length===2?(op==="+"?x+y:x-y):"?")+'</strong></div>';
+  html+='<p class="note">每回合需要選兩張不同位置的卡片。順序會影響減法答案。</p>';
+ }else if(active==="factor"){
+  html='<div class="target"><small>合成目標數字</small><strong>'+task.target+'</strong></div><div class="tile-grid">'+task.values.map((v,i)=>'<button class="tile '+(selection.includes(i)?"chosen":"")+'" data-number="'+i+'" '+(solved?'disabled':'')+'>'+v+'</button>').join("")+'</div><p class="note">選出兩張數字卡，讓它們的乘積等於目標。卡片可以有重複數值，但不能點同一張兩次。</p>';
+ }else if(active==="pizza"){
+  html='<div class="target"><small>需要拼出的分數</small><strong>'+task.numerator+'/'+task.denominator+'</strong></div><p class="description">選擇正確數量的披薩切片：</p><div class="tile-grid">'+Array.from({length:task.denominator},(_,i)=>'<button class="tile '+(selection.includes(i)?"chosen":"")+'" data-slice="'+i+'" '+(solved?'disabled':'')+'>🍕</button>').join("")+'</div><p class="note">已選 '+selection.length+' / '+task.denominator+' 片</p>';
+ }else if(active==="balance"){
+  html='<div class="paper"><div class="equation">'+task.c+' × □ '+(task.b>=0?"+ "+task.b:"− "+Math.abs(task.b))+' = '+task.total+'</div></div><p>調整方框中的數字，讓天平平衡。</p><input id="value" class="input" type="number" step="1" placeholder="輸入數字" aria-label="未知數">';
+ }else if(active==="lock"){
+  html='<div class="paper"><div class="equation">x + y = '+task.sum+'<br>'+task.c+'x + y = '+task.mix+'</div></div><div class="action"><label>x：<input class="input" id="valueX" type="number" step="1" placeholder="x"></label><label>y：<input class="input" id="valueY" type="number" step="1" placeholder="y"></label></div><p class="note">必須同時符合兩條線索，密碼鎖才會打開。</p>';
+ }else if(active==="coord"){
+  html='<div class="target"><small>寶藏坐標 (x, y)</small><strong>('+task.x+', '+task.y+')</strong></div><div class="plot">'+Array.from({length:49},(_,i)=>{const x=i%7-3,y=3-Math.floor(i/7);return '<button class="'+(x===0||y===0?"center ":"")+(selection[0]===i?"marked":"")+'" data-cell="'+i+'" '+(solved?'disabled':'')+' aria-label="坐標 '+x+','+y+'">'+x+','+y+'</button>';}).join("")+'</div><p class="note">先找水平 x 方向，再找垂直 y 方向。</p>';
+ }else if(active==="potion"){
+  html='<div class="target"><small>藥水調配比例 紅 : 藍</small><strong>'+task.a+' : '+task.b+'</strong></div><p class="description">今天要製作 '+task.multiplier+' 倍份量。各需要多少份材料？</p><div class="action"><label>🔴 紅色材料<br><input class="input" id="red" type="number" min="0" step="1" placeholder="紅色份數"></label><label>🔵 藍色材料<br><input class="input" id="blue" type="number" min="0" step="1" placeholder="藍色份數"></label></div>';
+ }else if(active==="ineq"){
+  const range=Array.from({length:11},(_,i)=>i-5);
+  html='<div class="target"><small>安全通行條件</small><strong>x '+task.operator+' '+task.bound+'</strong></div><p class="description">選出一個符合條件的整數，才能進入安全區域。</p><div class="tile-grid">'+range.map(v=>'<button class="tile" data-ineq="'+v+'" '+(solved?'disabled':'')+'>'+v+'</button>').join("")+'</div>';
+ }else if(active==="stats"){
+  const sum=task.vals.reduce((a,b)=>a+b,0);
+  html='<div class="bargraph">'+task.vals.map((v,i)=>'<div><div class="bar" style="height:'+(v*15)+'px"></div><small>'+(["A","B","C","D"][i])+'</small></div>').join("")+'</div><p class="description">'+(task.mode?"這四組資料的總和是多少？":"這四組資料的平均數是多少？")+'</p><input class="input" id="value" type="number" step="any" placeholder="填入答案"><p class="note">每根長條代表的數量可由高度觀察：'+task.vals.map((v,i)=>["A","B","C","D"][i]+": "+v).join("，")+'</p>';
+ }else if(active==="mirror"){
+  html='<p class="description">左側已經有圖案。請點選鏡面右側格子，畫出對稱的形狀。</p><div class="shape">'+Array.from({length:45},(_,i)=>{const x=i%9;const base=task.coords.includes(i);return '<button class="'+(base||selection.includes(i)?"active ":"")+(x===4?"axis":"")+'" '+(x<=4||solved?'disabled':'data-mirror="'+i+'"')+' aria-label="第 '+(Math.floor(i/9)+1)+' 列第 '+(x+1)+' 格"></button>';}).join("")+'</div><p class="note">中央第 5 欄是對稱軸，左邊是原圖，右邊由你補上。</p>';
+ }
+ return html;
+}
+function render(){
+ $("library").innerHTML=games.map(g=>'<button class="game-tab '+(g.id===active?"on":"")+'" data-game="'+g.id+'"><span class="emoji">'+g.emoji+'</span><b>'+g.name+'</b><small>'+g.chapter+'</small></button>').join("");
+ document.querySelectorAll("[data-game]").forEach(b=>b.onclick=()=>start(b.dataset.game));
+ const game=games.find(g=>g.id===active);
+ $("gameTag").textContent=game.chapter;$("gameTitle").textContent=game.emoji+" "+game.name;$("gameDesc").textContent=game.desc;
+ $("roundTag").textContent=round===3?"已完成":"回合 "+(round+1)+" / 3";
+ $("progress").innerHTML=Array.from({length:3},(_,i)=>'<i class="'+(i<=round?"done":"")+'"></i>').join("");
+ const done=round===3;
+ $("gameSurface").innerHTML=done?'<div class="target"><small>小遊戲完成</small><strong>'+("★".repeat(Math.max(1,3-Math.min(2,misses))))+'</strong></div><p class="description">已完成 3 回合。錯誤嘗試 '+misses+' 次，可以重玩挑戰更高星等。</p>':makeUI();
+ $("feedback").style.display=feedback?"block":"none";$("feedback").className="feedback "+(lastCorrect===true?"ok":lastCorrect===false?"bad":"");$("feedback").textContent=feedback;
+ $("actions").innerHTML=done?'<button class="btn" id="restart">再挑戰一次</button>':solved?'<button class="btn" id="next">下一回合 ➜</button>':(['number','factor','pizza','mirror'].includes(active)?'<button class="btn" id="submit">確認組合</button><button class="btn alt" id="clear">清除選擇</button>':(['balance','lock','potion','stats'].includes(active)?'<button class="btn" id="submit">檢查答案</button>':'<button class="btn alt" id="new">換一道題目</button>'));
+ bind();
+ $("completedCount").textContent=Object.keys(history).filter(k=>history[k]>0).length;
+ $("starCount").textContent=Object.values(history).reduce((a,b)=>a+Number(b||0),0);
+}
+function bind(){
+ document.querySelectorAll("[data-number]").forEach(b=>b.onclick=()=>{if(solved)return;const i=Number(b.dataset.number);selection=selection.includes(i)?selection.filter(x=>x!==i):selection.length<2?[...selection,i]:[selection[1],i];render();});
+ document.querySelectorAll("[data-slice]").forEach(b=>b.onclick=()=>{const i=Number(b.dataset.slice);selection=selection.includes(i)?selection.filter(v=>v!==i):[...selection,i];render();});
+ document.querySelectorAll("[data-op]").forEach(b=>b.onclick=()=>{op=b.dataset.op;render();});
+ document.querySelectorAll("[data-cell]").forEach(b=>b.onclick=()=>{const i=Number(b.dataset.cell);selection=[i];const x=i%7-3,y=3-Math.floor(i/7);check(x===task.x&&y===task.y,"選擇 ("+x+","+y+")，目標是 ("+task.x+","+task.y+")。");});
+ document.querySelectorAll("[data-ineq]").forEach(b=>b.onclick=()=>{const x=Number(b.dataset.ineq);check(task.operator===">"?x>task.bound:x<task.bound,"你選擇 "+x+"，需要滿足 x "+task.operator+" "+task.bound+"。");});
+ document.querySelectorAll("[data-mirror]").forEach(b=>b.onclick=()=>{const i=Number(b.dataset.mirror);selection=selection.includes(i)?selection.filter(v=>v!==i):[...selection,i];render();});
+ const submit=$("submit");if(submit)submit.onclick=submitAnswer;
+ const clear=$("clear");if(clear)clear.onclick=()=>{selection=[];feedback="";render();};
+ const next=$("next");if(next)next.onclick=()=>{round++;if(round===3){const stars=Math.max(1,3-Math.min(2,misses));history[active]=Math.max(history[active]||0,stars);save();feedback="";}else newRound();render();};
+ const restart=$("restart");if(restart)restart.onclick=()=>start(active);
+ const fresh=$("new");if(fresh)fresh.onclick=()=>{newRound();render();};
+}
+function submitAnswer(){
+ let ok=false,why="";
+ if(active==="number"){
+  if(selection.length!==2){feedback="先選兩張數字卡。";lastCorrect=null;render();return;}
+  const a=task.values[selection[0]],b=task.values[selection[1]],val=op==="+"?a+b:a-b;
+  ok=val===task.target;why=a+" "+op+" ("+b+") = "+val+"，目標為 "+task.target+"。";
+ }else if(active==="factor"){
+  if(selection.length!==2){feedback="先選兩張因數卡。";lastCorrect=null;render();return;}
+  const a=task.values[selection[0]],b=task.values[selection[1]];ok=a*b===task.target;why=a+" × "+b+" = "+(a*b)+"。";
+ }else if(active==="pizza"){
+  ok=selection.length===task.numerator;why="你選了 "+selection.length+" 片，目標是 "+task.numerator+" / "+task.denominator+"。";
+ }else if(active==="mirror"){
+  const expected=task.coords.map(i=>Math.floor(i/9)*9+(8-i%9));
+  ok=selection.length===expected.length&&selection.every(i=>expected.includes(i));why="鏡射後，每個格子到中央對稱軸的距離相同。";
+ }else if(active==="balance"){
+  const field=$("value");if(!field||field.value.trim()==="")return;
+  const x=Number(field.value);ok=task.c*x+task.b===task.total;why=task.c+" × "+x+" + ("+task.b+") = "+(task.c*x+task.b)+"，目標為 "+task.total+"。";
+ }else if(active==="lock"){
+  const fx=$("valueX"),fy=$("valueY");if(!fx.value.trim()||!fy.value.trim())return;
+  const x=Number(fx.value),y=Number(fy.value);ok=x+y===task.sum&&task.c*x+y===task.mix;why="需要同時滿足 x+y="+task.sum+" 和 "+task.c+"x+y="+task.mix+"。";
+ }else if(active==="potion"){
+  const r=$("red"),b=$("blue");if(!r.value.trim()||!b.value.trim())return;
+  const x=Number(r.value),y=Number(b.value);ok=x===task.red&&y===task.blue;why="正確調配量為紅色 "+task.red+" 份、藍色 "+task.blue+" 份。";
+ }else if(active==="stats"){
+  const field=$("value");if(!field.value.trim())return;
+  const sum=task.vals.reduce((a,b)=>a+b,0),target=task.mode?sum:sum/4;
+  ok=Math.abs(Number(field.value)-target)<1e-9;why="資料總和 "+sum+(task.mode?"。":"，除以 4 得平均 "+target+"。");
+ }
+ check(ok,why);
+}
+$("reset").onclick=()=>{if(!confirm("確定清除小遊戲的星星紀錄？"))return;history={};save();start(active);};
+start(active);
+</script></body></html>

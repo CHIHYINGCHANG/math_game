@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Math Quest｜115上七上數學教材中心</title>
+<meta name="description" content="對照115上翰林數學七上14回考點的原創闖關練習、數學機關、錯題診斷與A/B/C配分模擬考。">
+<style>
+:root{font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;color:#263449;background:#f2f6fc;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}
+a{color:#176bba;text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:1260px;margin:auto;padding:21px 17px 58px}
+header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:19px}
+.brand small{font-size:12px;font-weight:850;letter-spacing:.1em;color:#5680a6}
+.brand h1{font-size:clamp(25px,4vw,35px);margin:3px 0}.brand p{margin:5px 0;color:#63788f;font-size:13px}
+.back{border:1px solid #d6e5f4;background:white;border-radius:12px;padding:10px 14px;font-weight:750}
+.shell{display:grid;grid-template-columns:240px minmax(0,1fr);gap:18px}
+.panel{background:#fff;border:1px solid #deebf5;border-radius:20px;padding:19px;box-shadow:0 7px 23px #2540610c;margin-bottom:16px}
+.panel h2{font-size:20px;margin:0 0 14px}.panel h3{font-size:17px;margin:12px 0}
+nav .menu{display:grid;gap:8px}.navBtn{display:flex;gap:12px;align-items:center;text-align:left;border:1px solid #e2ecf4;border-radius:13px;padding:13px;background:#f8fbff;color:#35506e;font-weight:780}
+.navBtn.on{background:#e3f4ed;border-color:#37ac85;color:#145e4c}.navBtn span{font-size:21px}
+.stats{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}.stat{display:grid;gap:2px;text-align:center;min-width:76px}.stat strong{font-size:23px;color:#1c678b}.stat small{font-size:11px;color:#7b8ca1}
+.eyebrow{color:#4980a3;letter-spacing:.08em;font-size:11px;font-weight:850}.muted{color:#687c94;font-size:13px;line-height:1.6}
+.hero{background:linear-gradient(110deg,#e5f6f0,#e9f2ff);padding:24px;border-radius:18px;margin-bottom:15px}
+.hero h2{font-size:clamp(20px,3vw,28px);margin:5px 0 7px}
+.hero p{color:#55738a;font-size:13px;margin:0}.badge{background:#e5f2ff;color:#24649e;border-radius:30px;padding:6px 11px;font-size:12px;font-weight:750;white-space:nowrap}
+label{font-size:13px;font-weight:750;color:#3e5770;display:grid;gap:7px}.control{padding:10px 12px;border:1px solid #cadcea;background:#fff;border-radius:11px;min-height:42px;color:#253f5b;max-width:100%}
+.settings{display:flex;align-items:end;flex-wrap:wrap;gap:10px;margin:15px 0}.settings>label{flex:1;min-width:158px}
+.btn{background:#226eb9;color:#fff;border:0;border-radius:12px;padding:12px 17px;font-weight:800;white-space:normal}
+.btn.secondary{background:#eaf2fa;color:#345776}.btn.good{background:#198666}.btn.warn{background:#fff3dd;color:#9c6113}
+.btn:focus-visible,.option:focus-visible,.navBtn:focus-visible{outline:3px solid #e5a12d;outline-offset:2px}
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:15px 0}
+.option{border:2px solid #deebf6;border-radius:14px;padding:17px;background:#f7faff;min-height:70px;color:#253f5e;font-size:20px;font-weight:850;text-align:center;overflow-wrap:anywhere}
+.option small{display:block;color:#8293a4;font-size:11px;margin-bottom:2px}.option.selected{border-color:#288ab9;background:#e2f2fd}.option.correct{background:#e1f8eb;border-color:#25ac75}.option.incorrect{background:#fff0eb;border-color:#eb777a}
+.question{font-size:clamp(19px,3vw,24px);font-weight:820;line-height:1.55;margin:15px 0 20px;white-space:pre-line}
+.meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.meta b{background:#f0f5fb;border-radius:99px;padding:5px 10px;font-size:12px;color:#4f6781}
+.response{border:2px solid #c8ddeb;border-radius:13px;padding:12px;font-size:21px;width:100%;max-width:430px;display:block}
+.answerArea{margin:17px 0;display:grid;gap:8px}.action{display:flex;gap:9px;flex-wrap:wrap;margin:15px 0}
+.feedback{padding:16px;border-radius:14px;background:#eaf4ff;margin:14px 0;line-height:1.7}.feedback.good{background:#e3f8eb}.feedback.bad{background:#fff1ed}
+.feedback strong{display:block;margin-bottom:7px}.feedback p{margin:5px 0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.lesson{border:1px solid #dce9f4;border-radius:14px;background:#f9fbff;padding:14px;text-align:left;display:grid;gap:5px;color:#304b69}
+.lesson.active{background:#e8f5ff;border-color:#54a0e2}.lesson small{color:#70869e}
+.pill{border-radius:40px;background:#edf4fb;padding:7px 12px;color:#3c658a;font-weight:700;font-size:12px}
+.stepper{display:flex;gap:5px;margin:12px 0 20px}.stepper i{display:block;flex:1;height:7px;background:#e1eaf3;border-radius:7px}.stepper i.on{background:#24ae8a}
+.puzzle-scene{border-radius:17px;padding:20px;background:linear-gradient(145deg,#143455,#28547b);color:#fff;margin:13px 0;text-align:center}
+.puzzle-scene strong{display:block;font-size:clamp(24px,5vw,36px);margin:10px 0}.puzzle-scene small{color:#cfdfec}
+.routeGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:17px 0}
+.route{padding:18px 9px;background:#f7fbff;border:2px solid #cfdfef;border-radius:16px;color:#2d4866;text-align:center;font-size:17px;font-weight:780}
+.route span{display:block;font-size:33px;margin-bottom:9px}
+.route.sel{border-color:#28aa83;background:#e5faf0}
+.divider{height:1px;background:#e3edf6;margin:16px 0}
+.examProgress{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.timer{font-weight:850;color:#af532b;font-size:20px;font-variant-numeric:tabular-nums}
+.exam-nav{display:flex;gap:5px;flex-wrap:wrap;margin:13px 0}.exam-nav button{width:35px;height:35px;border:1px solid #cfdfef;border-radius:9px;background:#f8fbff;color:#52708b}
+.exam-nav button.answered{background:#d9f1e7;border-color:#41bd8d}.exam-nav button.now{background:#246db5;color:#fff}
+.result{font-size:42px;font-weight:900;color:#1d7d61}.bars{display:flex;flex-wrap:wrap;gap:8px}.bar{padding:9px 12px;border-radius:12px;background:#f1f6fa;font-size:13px}
+.table{width:100%;border-collapse:collapse;font-size:13px}.table th,.table td{padding:9px;text-align:left;border-bottom:1px solid #e3ebf2}.table td:last-child{text-align:right}
+.empty{padding:24px;text-align:center;color:#71839c;background:#f6f9fd;border-radius:13px}
+.errorText{color:#9e493e}.fine{color:#7a8da1;font-size:12px;line-height:1.7}
+@media(max-width:840px){.shell{display:block}nav .menu{grid-template-columns:repeat(4,1fr);display:grid}.navBtn{padding:11px 5px;flex-direction:column;text-align:center;gap:4px;font-size:11px}.panel{padding:15px}.hero{padding:18px}}
+@media(max-width:530px){.grid{grid-template-columns:1fr}.routeGrid{grid-template-columns:1fr}.choices{gap:7px}.option{padding:11px;font-size:17px;min-height:62px}.wrap{padding:11px}.settings>label{min-width:135px}}
+</style></head><body>
+<div class="wrap"><header><div class="brand"><small>MATH QUEST · 115 學年度七上</small><h1>📘 數學教材挑戰中心</h1><p>14 回考點對照 × 原創分級題庫 × 解謎機關 × 模擬考</p></div><a class="back" href="./">← 回冒險地圖</a></header>
+<div class="shell"><nav><section class="panel"><div class="menu" id="navigation">
+<button class="navBtn on" data-view="lessons"><span>🗺️</span>14 回課程</button>
+<button class="navBtn" data-view="practice"><span>✍️</span>分級練習</button>
+<button class="navBtn" data-view="puzzle"><span>🧩</span>機關解謎</button>
+<button class="navBtn" data-view="exam"><span>📝</span>模擬考</button>
+<button class="navBtn" data-view="wrong"><span>📕</span>錯題診斷</button>
+</div></section><section class="panel"><h2>📈 學習紀錄</h2><div class="stats">
+<div class="stat"><strong id="statAttempts">0</strong><small>練習題數</small></div>
+<div class="stat"><strong id="statAccuracy">0%</strong><small>正確率</small></div>
+<div class="stat"><strong id="statPuzzles">0</strong><small>機關通關</small></div>
+</div><div class="divider"></div><p class="fine">這裡的紀錄儲存在同一瀏覽器，不會清除原本冒險地圖的星星、金幣、寶箱與稱號。</p></section></nav>
+<main><div class="hero"><small class="eyebrow">CURRICULUM-ALIGNED · ORIGINAL QUESTIONS</small><h2 id="pageTitle">七上 14 回課程地圖</h2><p id="pageSubtitle">由正負數一路挑戰到一元一次方程式應用問題。</p></div>
+<div id="stage"><section class="panel"><h2>載入課程中…</h2><p class="muted">若一直停留在此處，請確認 Cloudflare 已部署包含 curriculum.js 和 study-app.js 的最新版本。</p></section></div>
+<section class="panel fine"><b>使用說明：</b>本中心以使用者提供的 115 上翰林 A／B／C 試卷 14 回考點及配分作為設計參考；所有遊戲題目均為原創模板，並非翰林官方線上題庫。D1–D5 為教學用途的難度分級，沒有學生實測難度資料。模擬考非選擇題以最終答案自動批改，不包含計算過程的部分給分。</section>
+</main></div></div>
+<script src="./curriculum.js"></script><script src="./study-app.js"></script></body></html>

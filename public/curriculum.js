@@ -198,7 +198,7 @@ function makeExam(form,topicRange){
  for(const [kind,count,score] of specs[form]){
   for(let i=0;i<count;i++){
    const chapter=scope[sequence%scope.length];
-   const d=kind==="choice"?[2,3,4,3,5][sequence%5]:kind==="fill"?[2,3,4,4,5][sequence%5]:[4,5,4][sequence%3];
+   const d=form==="A"&&kind==="fill"?(i<5?[1,2,2,2,3][i]:[3,4,4,5,5][i-5]):kind==="choice"?[2,3,4,3,5][sequence%5]:kind==="fill"?[2,3,4,4,5][sequence%5]:[4,5,4][sequence%3];
    let q=makeQuestion(chapter,d,kind);let retries=0;
    while(seen.has(q.prompt)&&retries++<24)q=makeQuestion(chapter,d,kind);
    seen.add(q.prompt);q.points=score;q.number=++sequence;questions.push(q);
